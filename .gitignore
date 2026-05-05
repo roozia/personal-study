@@ -1,0 +1,9 @@
+# 반입용 소스 발췌 폴더 (Git 미관리)
+LogViewer_source/
+
+# 작업 Report 폴더 (Git 미관리)
+report/
+
+# Tomcat 설치 파일
+apache-tomcat-*/
+*.zip
