@@ -3,13 +3,17 @@ package com.logviewer.controller;
 import com.logviewer.config.LogViewerConfig;
 import com.logviewer.service.LogExtractService;
 
-// ※ Tomcat 버전에 따라 import 패키지를 변경하세요.
-//    Tomcat 9  → javax.servlet.*
-//    Tomcat 10 → jakarta.servlet.*
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+// ※ Tomcat 버전에 따라 아래 둘 중 하나를 활성화하세요.
+// Tomcat 9  (javax)
+//import javax.servlet.annotation.WebServlet;
+//import javax.servlet.http.HttpServlet;
+//import javax.servlet.http.HttpServletRequest;
+//import javax.servlet.http.HttpServletResponse;
+// Tomcat 10 (jakarta) — 현재 활성
+import jakarta.servlet.annotation.WebServlet;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.io.PrintWriter;

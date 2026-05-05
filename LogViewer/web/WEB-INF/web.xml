@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Tomcat 10 (jakarta) 기준.
+  Tomcat 9 (javax) 로 변경 시:
+    xmlns      → http://xmlns.jcp.org/xml/ns/javaee
+    xsi:schema → http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd
+    version    → "4.0"
+-->
+<web-app xmlns="https://jakarta.ee/xml/ns/jakartaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee
+         https://jakarta.ee/xml/ns/jakartaee/web-app_5_0.xsd"
+         version="5.0">
+
+    <display-name>LogViewer</display-name>
+
+</web-app>
