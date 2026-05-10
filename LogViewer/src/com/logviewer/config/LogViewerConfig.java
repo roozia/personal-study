@@ -73,7 +73,7 @@ public class LogViewerConfig {
         return props;
     }
 
-    private static List<String> parseKeywords(String raw) {
+    public static List<String> parseKeywords(String raw) {
         // Python: list[str]
         // TS: string[]
         List<String> result = new ArrayList<>();
@@ -109,4 +109,13 @@ public class LogViewerConfig {
     public int          getContextLines()      { return contextLines; }
     public String       getOutputPrefix()      { return outputPrefix; }
     public String       getAllowedBaseDir()     { return allowedBaseDir; }
+
+    // -------------------------------------------------------------------------
+    // Setters (화면 입력값으로 properties 기본값 override 시 사용)
+    // -------------------------------------------------------------------------
+
+    public void setFilePath(String filePath)                   { this.filePath = filePath; }
+    public void setDatetimeCondition(String datetimeCondition) { this.datetimeCondition = datetimeCondition; }
+    public void setContextLines(int contextLines)              { this.contextLines = contextLines; }
+    public void setKeywords(List<String> keywords)             { this.keywords = keywords; }
 }

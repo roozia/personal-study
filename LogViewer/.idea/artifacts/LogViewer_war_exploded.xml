@@ -2,11 +2,11 @@
   <artifact type="exploded-war" name="LogViewer:war exploded">
     <output-path>$PROJECT_DIR$/out/artifacts/LogViewer_war_exploded</output-path>
     <root id="root">
+      <element id="javaee-facet-resources" facet="LogViewer/web/Web" />
       <element id="directory" name="WEB-INF">
         <element id="directory" name="classes">
           <element id="module-output" name="LogViewer" />
         </element>
-        <element id="file" src="$PROJECT_DIR$/web/WEB-INF/web.xml" />
       </element>
     </root>
   </artifact>

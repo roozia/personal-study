@@ -42,21 +42,12 @@ public class LogDownloadController extends HttpServlet {
     private final LogExtractService extractService = new LogExtractService();
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        process(response);
-    }
-
-    // 회사 Framework 가 *.do 를 POST 로 호출하는 경우를 위해 doPost 도 위임
-    @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        process(response);
-    }
-
-    private void process(HttpServletResponse response) throws IOException {
         try {
             LogViewerConfig config = LogViewerConfig.load();
-            String filename = buildFilename(config.getOutputPrefix());
+            applyRequestParams(request, config);
 
+            String filename = buildFilename(config.getOutputPrefix());
             response.setContentType("text/plain; charset=UTF-8");
             response.setCharacterEncoding("UTF-8");
             response.setHeader("Content-Disposition", "attachment; filename=\"" + filename + "\"");
@@ -66,6 +57,26 @@ public class LogDownloadController extends HttpServlet {
         } catch (IOException e) {
             sendError(response, e.getMessage());
         }
+    }
+
+    private void applyRequestParams(HttpServletRequest request, LogViewerConfig config) {
+        String filePath = trim(request.getParameter("filePath"));
+        if (!filePath.isEmpty()) config.setFilePath(filePath);
+
+        String datetimeCondition = trim(request.getParameter("datetimeCondition"));
+        if (!datetimeCondition.isEmpty()) config.setDatetimeCondition(datetimeCondition);
+
+        String contextLines = trim(request.getParameter("contextLines"));
+        if (!contextLines.isEmpty()) {
+            try { config.setContextLines(Integer.parseInt(contextLines)); } catch (NumberFormatException ignored) {}
+        }
+
+        String keywords = trim(request.getParameter("keywords"));
+        if (!keywords.isEmpty()) config.setKeywords(LogViewerConfig.parseKeywords(keywords));
+    }
+
+    private static String trim(String value) {
+        return value == null ? "" : value.trim();
     }
 
     private String buildFilename(String prefix) {
