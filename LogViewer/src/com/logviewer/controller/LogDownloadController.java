@@ -3,46 +3,27 @@ package com.logviewer.controller;
 import com.logviewer.config.LogViewerConfig;
 import com.logviewer.service.LogExtractService;
 
-// ※ Tomcat 버전에 따라 아래 둘 중 하나를 활성화하세요.
-// Tomcat 9  (javax)
-//import javax.servlet.annotation.WebServlet;
-//import javax.servlet.http.HttpServlet;
-//import javax.servlet.http.HttpServletRequest;
-//import javax.servlet.http.HttpServletResponse;
-// Tomcat 10 (jakarta) — 현재 활성
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-/**
- * /logDownload.do 요청을 처리하는 컨트롤러.
- *
- * 동작:
- *   1) logviewer.properties 를 읽어 조회 조건 파악
- *   2) LogExtractService 로 로그 파일 발췌
- *   3) 결과를 *.log 파일로 즉시 다운로드 응답
- *
- * 회사 Framework 적용 시 변경 사항:
- *   - @WebServlet 대신 Framework 방식의 URL 매핑으로 교체
- *   - HttpServlet 대신 회사 BaseController 상속으로 교체
- *   - doGet / doPost 대신 Framework 의 action 메서드로 교체
- */
-@WebServlet("/logDownload.do")
-public class LogDownloadController extends HttpServlet {
+@Controller
+public class LogDownloadController {
 
     private static final DateTimeFormatter FILENAME_FORMAT =
             DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss");
 
     private final LogExtractService extractService = new LogExtractService();
 
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    @RequestMapping(value = "/logDownload.do", method = RequestMethod.POST)
+    public void download(HttpServletRequest request, HttpServletResponse response) throws IOException {
         try {
             LogViewerConfig config = LogViewerConfig.load();
             applyRequestParams(request, config);

@@ -20,9 +20,25 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module-library">
-      <library name="Tomcat 10 servlet-api">
+      <library name="Tomcat 9 servlet-api">
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../apache-tomcat-10.1.54/lib/servlet-api.jar!/" />
+          <root url="jar://$MODULE_DIR$/../server/apache-tomcat-9.0.117/lib/servlet-api.jar!/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES />
+      </library>
+    </orderEntry>
+    <orderEntry type="module-library">
+      <library name="Spring 5.3.39">
+        <CLASSES>
+          <root url="jar://$MODULE_DIR$/web/WEB-INF/lib/spring-webmvc-5.3.39.jar!/" />
+          <root url="jar://$MODULE_DIR$/web/WEB-INF/lib/spring-context-5.3.39.jar!/" />
+          <root url="jar://$MODULE_DIR$/web/WEB-INF/lib/spring-core-5.3.39.jar!/" />
+          <root url="jar://$MODULE_DIR$/web/WEB-INF/lib/spring-beans-5.3.39.jar!/" />
+          <root url="jar://$MODULE_DIR$/web/WEB-INF/lib/spring-web-5.3.39.jar!/" />
+          <root url="jar://$MODULE_DIR$/web/WEB-INF/lib/spring-aop-5.3.39.jar!/" />
+          <root url="jar://$MODULE_DIR$/web/WEB-INF/lib/spring-expression-5.3.39.jar!/" />
+          <root url="jar://$MODULE_DIR$/web/WEB-INF/lib/spring-jcl-5.3.39.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
