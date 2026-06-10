@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>LogViewer Python - 로그 발췌 다운로드</title>
+    <style>
+        body { font-family: sans-serif; padding: 30px; max-width: 720px; }
+        h2 { margin-bottom: 4px; }
+        .subtitle { font-size: 13px; color: #888; margin-bottom: 20px; }
+        table { border-collapse: collapse; width: 100%; }
+        th, td { padding: 8px 12px; text-align: left; vertical-align: top; }
+        th { width: 160px; color: #555; font-weight: normal; padding-top: 11px; }
+        input[type="text"], input[type="number"] {
+            width: 100%; padding: 6px 8px; box-sizing: border-box;
+            border: 1px solid #ccc; border-radius: 3px; font-size: 14px;
+        }
+        .hint { font-size: 12px; color: #888; margin-top: 4px; }
+        .actions { margin-top: 20px; }
+        button { padding: 8px 24px; font-size: 14px; cursor: pointer; }
+        .note { margin-top: 16px; font-size: 12px; color: #888; }
+    </style>
+</head>
+<body>
+
+<h2>로그 발췌 다운로드</h2>
+<p class="subtitle">Python (Flask) 버전 — POST /logDownloadPy.do</p>
+
+<!-- Java: action="logDownload.do" → Python: action="logDownloadPy.do" -->
+<form action="/logDownloadPy.do" method="post">
+    <table>
+        <tr>
+            <th>파일 경로</th>
+            <td>
+                <input type="text" name="filePath"
+                       value="C:/personalStudy/MyLogTool/logs/sample.log"
+                       placeholder="비워두면 logviewer.properties 값 사용">
+                <div class="hint">대상 로그 파일 절대 경로</div>
+            </td>
+        </tr>
+        <tr>
+            <th>날짜/시간 조건</th>
+            <td>
+                <input type="text" name="datetimeCondition"
+                       value=""
+                       placeholder="예) 2024-03-15 09:14  — 비워두면 조건 없이 키워드만 검색">
+                <div class="hint">LIKE 조건 (분 단위까지만 입력해도 해당 분 전체 매칭)</div>
+            </td>
+        </tr>
+        <tr>
+            <th>컨텍스트 라인</th>
+            <td>
+                <input type="number" name="contextLines"
+                       value="10" min="0" style="width:100px;">
+                <div class="hint">매칭 행 기준 위아래로 발췌할 줄 수</div>
+            </td>
+        </tr>
+        <tr>
+            <th>키워드</th>
+            <td>
+                <input type="text" name="keywords"
+                       value="ERROR"
+                       placeholder="쉼표 구분, 복수 키워드는 OR 조합">
+                <div class="hint">예) NullPointerException,user01,결제 처리 중단</div>
+            </td>
+        </tr>
+    </table>
+
+    <div class="actions">
+        <button type="submit">로그 다운로드</button>
+    </div>
+</form>
+
+<p class="note">※ 입력값이 없는 항목은 <code>logviewer.properties</code> 설정값이 사용됩니다.</p>
+
+</body>
+</html>

@@ -1,0 +1,4 @@
+# LogViewer Python 버전 의존성
+# 설치 방법: pip install -r requirements.txt
+
+flask>=3.0.0
