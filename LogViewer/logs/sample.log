@@ -1,0 +1,195 @@
+2026-06-15 15:30:01,234 [INFO] [MainThread] application_start - B2B SCM Application initialized successfully.
+2026-06-15 15:30:05,112 [INFO] [ConnectionPool] db_connect - Successfully connected to the database cluster (Node-01).
+2026-06-15 15:31:12,456 [INFO] [UserSession] login_request - User 'user_admin_01' requested login from IP 192.168.10.45.
+2026-06-15 15:31:13,012 [INFO] [UserSession] login_success - User 'user_admin_01' logged in. Session token generated.
+2026-06-15 15:32:20,889 [INFO] [PurchaseOrder] create_order - New purchase order created. OrderID: PO-2026-00891.
+2026-06-15 15:32:22,104 [WARN] [InventoryService] check_stock - Safety stock level warning for ItemID: ITEM-9940. Current stock: 12.
+2026-06-15 15:33:05,556 [INFO] [PurchaseOrder] update_status - Order PO-2026-00891 status changed from 'DRAFT' to 'PENDING_APPROVAL'.
+2026-06-15 15:34:45,312 [ERROR] [ExternalAPI] send_request - Connection timeout while connecting to vendor API endpoint (https://api.vendor-scm.internal/v1/orders).
+2026-06-15 15:34:45,315 [WARN] [ExternalAPI] retry_request - Retrying request to vendor API. Attempt 1 of 3...
+2026-06-15 15:34:48,620 [ERROR] [ExternalAPI] send_request - Connection timeout while connecting to vendor API endpoint (https://api.vendor-scm.internal/v1/orders).
+2026-06-15 15:34:48,622 [WARN] [ExternalAPI] retry_request - Retrying request to vendor API. Attempt 2 of 3...
+2026-06-15 15:34:51,930 [ERROR] [ExternalAPI] send_request - Connection timeout while connecting to vendor API endpoint (https://api.vendor-scm.internal/v1/orders).
+2026-06-15 15:34:51,933 [CRITICAL] [PurchaseOrder] process_failure - Failed to send Purchase Order PO-2026-00891 to external vendor after 3 attempts. Task aborted.
+2026-06-15 15:36:01,004 [INFO] [UserSession] logout_request - User 'user_admin_01' logged out. Session destroyed.
+2026-06-15 15:40:12,778 [INFO] [SystemGC] run_gc - Periodic garbage collection completed. Memory reclaimed: 142MB.
+2026-06-15 15:30:01,234 [INFO] [MainThread] application_start - B2B SCM Application initialized successfully.
+2026-06-15 15:30:05,112 [INFO] [ConnectionPool] db_connect - Successfully connected to the database cluster (Node-01).
+2026-06-15 15:31:12,456 [INFO] [UserSession] login_request - User 'user_admin_01' requested login from IP 192.168.10.45.
+2026-06-15 15:31:13,012 [INFO] [UserSession] login_success - User 'user_admin_01' logged in. Session token generated.
+2026-06-15 15:32:20,889 [INFO] [PurchaseOrder] create_order - New purchase order created. OrderID: PO-2026-00891.
+2026-06-15 15:32:22,104 [WARN] [InventoryService] check_stock - Safety stock level warning for ItemID: ITEM-9940. Current stock: 12.
+2026-06-15 15:33:05,556 [INFO] [PurchaseOrder] update_status - Order PO-2026-00891 status changed from 'DRAFT' to 'PENDING_APPROVAL'.
+2026-06-15 15:34:45,312 [ERROR] [ExternalAPI] send_request - Connection timeout while connecting to vendor API endpoint (https://api.vendor-scm.internal/v1/orders).
+2026-06-15 15:34:45,315 [WARN] [ExternalAPI] retry_request - Retrying request to vendor API. Attempt 1 of 3...
+2026-06-15 15:34:48,620 [ERROR] [ExternalAPI] send_request - Connection timeout while connecting to vendor API endpoint (https://api.vendor-scm.internal/v1/orders).
+2026-06-15 15:34:48,622 [WARN] [ExternalAPI] retry_request - Retrying request to vendor API. Attempt 2 of 3...
+2026-06-15 15:34:51,930 [ERROR] [ExternalAPI] send_request - Connection timeout while connecting to vendor API endpoint (https://api.vendor-scm.internal/v1/orders).
+2026-06-15 15:34:51,933 [CRITICAL] [PurchaseOrder] process_failure - Failed to send Purchase Order PO-2026-00891 to external vendor after 3 attempts. Task aborted.
+2026-06-15 15:36:01,004 [INFO] [UserSession] logout_request - User 'user_admin_01' logged out. Session destroyed.
+2026-06-15 15:40:12,778 [INFO] [SystemGC] run_gc - Periodic garbage collection completed. Memory reclaimed: 142MB.
+2026-06-15 15:30:01,234 [INFO] [MainThread] application_start - B2B SCM Application initialized successfully.
+2026-06-15 15:30:05,112 [INFO] [ConnectionPool] db_connect - Successfully connected to the database cluster (Node-01).
+2026-06-15 15:31:12,456 [INFO] [UserSession] login_request - User 'user_admin_01' requested login from IP 192.168.10.45.
+2026-06-15 15:31:13,012 [INFO] [UserSession] login_success - User 'user_admin_01' logged in. Session token generated.
+2026-06-15 15:32:20,889 [INFO] [PurchaseOrder] create_order - New purchase order created. OrderID: PO-2026-00891.
+2026-06-15 15:32:22,104 [WARN] [InventoryService] check_stock - Safety stock level warning for ItemID: ITEM-9940. Current stock: 12.
+2026-06-15 15:33:05,556 [INFO] [PurchaseOrder] update_status - Order PO-2026-00891 status changed from 'DRAFT' to 'PENDING_APPROVAL'.
+2026-06-15 15:34:45,312 [ERROR] [ExternalAPI] send_request - Connection timeout while connecting to vendor API endpoint (https://api.vendor-scm.internal/v1/orders).
+2026-06-15 15:34:45,315 [WARN] [ExternalAPI] retry_request - Retrying request to vendor API. Attempt 1 of 3...
+2026-06-15 15:34:48,620 [ERROR] [ExternalAPI] send_request - Connection timeout while connecting to vendor API endpoint (https://api.vendor-scm.internal/v1/orders).
+2026-06-15 15:34:48,622 [WARN] [ExternalAPI] retry_request - Retrying request to vendor API. Attempt 2 of 3...
+2026-06-15 15:34:51,930 [ERROR] [ExternalAPI] send_request - Connection timeout while connecting to vendor API endpoint (https://api.vendor-scm.internal/v1/orders).
+2026-06-15 15:34:51,933 [CRITICAL] [PurchaseOrder] process_failure - Failed to send Purchase Order PO-2026-00891 to external vendor after 3 attempts. Task aborted.
+2026-06-15 15:36:01,004 [INFO] [UserSession] logout_request - User 'user_admin_01' logged out. Session destroyed.
+2026-06-15 15:40:12,778 [INFO] [SystemGC] run_gc - Periodic garbage collection completed. Memory reclaimed: 142MB.
+2026-06-15 15:30:01,234 [INFO] [MainThread] application_start - B2B SCM Application initialized successfully.
+2026-06-15 15:30:05,112 [INFO] [ConnectionPool] db_connect - Successfully connected to the database cluster (Node-01).
+2026-06-15 15:31:12,456 [INFO] [UserSession] login_request - User 'user_admin_01' requested login from IP 192.168.10.45.
+2026-06-15 15:31:13,012 [INFO] [UserSession] login_success - User 'user_admin_01' logged in. Session token generated.
+2026-06-15 15:32:20,889 [INFO] [PurchaseOrder] create_order - New purchase order created. OrderID: PO-2026-00891.
+2026-06-15 15:32:22,104 [WARN] [InventoryService] check_stock - Safety stock level warning for ItemID: ITEM-9940. Current stock: 12.
+2026-06-15 15:33:05,556 [INFO] [PurchaseOrder] update_status - Order PO-2026-00891 status changed from 'DRAFT' to 'PENDING_APPROVAL'.
+2026-06-15 15:34:45,312 [ERROR] [ExternalAPI] send_request - Connection timeout while connecting to vendor API endpoint (https://api.vendor-scm.internal/v1/orders).
+2026-06-15 15:34:45,315 [WARN] [ExternalAPI] retry_request - Retrying request to vendor API. Attempt 1 of 3...
+2026-06-15 15:34:48,620 [ERROR] [ExternalAPI] send_request - Connection timeout while connecting to vendor API endpoint (https://api.vendor-scm.internal/v1/orders).
+2026-06-15 15:34:48,622 [WARN] [ExternalAPI] retry_request - Retrying request to vendor API. Attempt 2 of 3...
+2026-06-15 15:34:51,930 [ERROR] [ExternalAPI] send_request - Connection timeout while connecting to vendor API endpoint (https://api.vendor-scm.internal/v1/orders).
+2026-06-15 15:34:51,933 [CRITICAL] [PurchaseOrder] process_failure - Failed to send Purchase Order PO-2026-00891 to external vendor after 3 attempts. Task aborted.
+2026-06-15 15:36:01,004 [INFO] [UserSession] logout_request - User 'user_admin_01' logged out. Session destroyed.
+2026-06-15 15:40:12,778 [INFO] [SystemGC] run_gc - Periodic garbage collection completed. Memory reclaimed: 142MB.
+2026-06-15 15:30:01,234 [INFO] [MainThread] application_start - B2B SCM Application initialized successfully.
+2026-06-15 15:30:05,112 [INFO] [ConnectionPool] db_connect - Successfully connected to the database cluster (Node-01).
+2026-06-15 15:31:12,456 [INFO] [UserSession] login_request - User 'user_admin_01' requested login from IP 192.168.10.45.
+2026-06-15 15:31:13,012 [INFO] [UserSession] login_success - User 'user_admin_01' logged in. Session token generated.
+2026-06-15 15:32:20,889 [INFO] [PurchaseOrder] create_order - New purchase order created. OrderID: PO-2026-00891.
+2026-06-15 15:32:22,104 [WARN] [InventoryService] check_stock - Safety stock level warning for ItemID: ITEM-9940. Current stock: 12.
+2026-06-15 15:33:05,556 [INFO] [PurchaseOrder] update_status - Order PO-2026-00891 status changed from 'DRAFT' to 'PENDING_APPROVAL'.
+2026-06-15 15:34:45,312 [ERROR] [ExternalAPI] send_request - Connection timeout while connecting to vendor API endpoint (https://api.vendor-scm.internal/v1/orders).
+2026-06-15 15:34:45,315 [WARN] [ExternalAPI] retry_request - Retrying request to vendor API. Attempt 1 of 3...
+2026-06-15 15:34:48,620 [ERROR] [ExternalAPI] send_request - Connection timeout while connecting to vendor API endpoint (https://api.vendor-scm.internal/v1/orders).
+2026-06-15 15:34:48,622 [WARN] [ExternalAPI] retry_request - Retrying request to vendor API. Attempt 2 of 3...
+2026-06-15 15:34:51,930 [ERROR] [ExternalAPI] send_request - Connection timeout while connecting to vendor API endpoint (https://api.vendor-scm.internal/v1/orders).
+2026-06-15 15:34:51,933 [CRITICAL] [PurchaseOrder] process_failure - Failed to send Purchase Order PO-2026-00891 to external vendor after 3 attempts. Task aborted.
+2026-06-15 15:36:01,004 [INFO] [UserSession] logout_request - User 'user_admin_01' logged out. Session destroyed.
+2026-06-15 15:40:12,778 [INFO] [SystemGC] run_gc - Periodic garbage collection completed. Memory reclaimed: 142MB.
+2026-06-15 15:30:01,234 [INFO] [MainThread] application_start - B2B SCM Application initialized successfully.
+2026-06-15 15:30:05,112 [INFO] [ConnectionPool] db_connect - Successfully connected to the database cluster (Node-01).
+2026-06-15 15:31:12,456 [INFO] [UserSession] login_request - User 'user_admin_01' requested login from IP 192.168.10.45.
+2026-06-15 15:31:13,012 [INFO] [UserSession] login_success - User 'user_admin_01' logged in. Session token generated.
+2026-06-15 15:32:20,889 [INFO] [PurchaseOrder] create_order - New purchase order created. OrderID: PO-2026-00891.
+2026-06-15 15:32:22,104 [WARN] [InventoryService] check_stock - Safety stock level warning for ItemID: ITEM-9940. Current stock: 12.
+2026-06-15 15:33:05,556 [INFO] [PurchaseOrder] update_status - Order PO-2026-00891 status changed from 'DRAFT' to 'PENDING_APPROVAL'.
+2026-06-15 15:34:45,312 [ERROR] [ExternalAPI] send_request - Connection timeout while connecting to vendor API endpoint (https://api.vendor-scm.internal/v1/orders).
+2026-06-15 15:34:45,315 [WARN] [ExternalAPI] retry_request - Retrying request to vendor API. Attempt 1 of 3...
+2026-06-15 15:34:48,620 [ERROR] [ExternalAPI] send_request - Connection timeout while connecting to vendor API endpoint (https://api.vendor-scm.internal/v1/orders).
+2026-06-15 15:34:48,622 [WARN] [ExternalAPI] retry_request - Retrying request to vendor API. Attempt 2 of 3...
+2026-06-15 15:34:51,930 [ERROR] [ExternalAPI] send_request - Connection timeout while connecting to vendor API endpoint (https://api.vendor-scm.internal/v1/orders).
+2026-06-15 15:34:51,933 [CRITICAL] [PurchaseOrder] process_failure - Failed to send Purchase Order PO-2026-00891 to external vendor after 3 attempts. Task aborted.
+2026-06-15 15:36:01,004 [INFO] [UserSession] logout_request - User 'user_admin_01' logged out. Session destroyed.
+2026-06-15 15:40:12,778 [INFO] [SystemGC] run_gc - Periodic garbage collection completed. Memory reclaimed: 142MB.
+2026-06-15 15:30:01,234 [INFO] [MainThread] application_start - B2B SCM Application initialized successfully.
+2026-06-15 15:30:05,112 [INFO] [ConnectionPool] db_connect - Successfully connected to the database cluster (Node-01).
+2026-06-15 15:31:12,456 [INFO] [UserSession] login_request - User 'user_admin_01' requested login from IP 192.168.10.45.
+2026-06-15 15:31:13,012 [INFO] [UserSession] login_success - User 'user_admin_01' logged in. Session token generated.
+2026-06-15 15:32:20,889 [INFO] [PurchaseOrder] create_order - New purchase order created. OrderID: PO-2026-00891.
+2026-06-15 15:32:22,104 [WARN] [InventoryService] check_stock - Safety stock level warning for ItemID: ITEM-9940. Current stock: 12.
+2026-06-15 15:33:05,556 [INFO] [PurchaseOrder] update_status - Order PO-2026-00891 status changed from 'DRAFT' to 'PENDING_APPROVAL'.
+2026-06-15 15:34:45,312 [ERROR] [ExternalAPI] send_request - Connection timeout while connecting to vendor API endpoint (https://api.vendor-scm.internal/v1/orders).
+2026-06-15 15:34:45,315 [WARN] [ExternalAPI] retry_request - Retrying request to vendor API. Attempt 1 of 3...
+2026-06-15 15:34:48,620 [ERROR] [ExternalAPI] send_request - Connection timeout while connecting to vendor API endpoint (https://api.vendor-scm.internal/v1/orders).
+2026-06-15 15:34:48,622 [WARN] [ExternalAPI] retry_request - Retrying request to vendor API. Attempt 2 of 3...
+2026-06-15 15:34:51,930 [ERROR] [ExternalAPI] send_request - Connection timeout while connecting to vendor API endpoint (https://api.vendor-scm.internal/v1/orders).
+2026-06-15 15:34:51,933 [CRITICAL] [PurchaseOrder] process_failure - Failed to send Purchase Order PO-2026-00891 to external vendor after 3 attempts. Task aborted.
+2026-06-15 15:36:01,004 [INFO] [UserSession] logout_request - User 'user_admin_01' logged out. Session destroyed.
+2026-06-15 15:40:12,778 [INFO] [SystemGC] run_gc - Periodic garbage collection completed. Memory reclaimed: 142MB.
+2026-06-15 15:30:01,234 [INFO] [MainThread] application_start - B2B SCM Application initialized successfully.
+2026-06-15 15:30:05,112 [INFO] [ConnectionPool] db_connect - Successfully connected to the database cluster (Node-01).
+2026-06-15 15:31:12,456 [INFO] [UserSession] login_request - User 'user_admin_01' requested login from IP 192.168.10.45.
+2026-06-15 15:31:13,012 [INFO] [UserSession] login_success - User 'user_admin_01' logged in. Session token generated.
+2026-06-15 15:32:20,889 [INFO] [PurchaseOrder] create_order - New purchase order created. OrderID: PO-2026-00891.
+2026-06-15 15:32:22,104 [WARN] [InventoryService] check_stock - Safety stock level warning for ItemID: ITEM-9940. Current stock: 12.
+2026-06-15 15:33:05,556 [INFO] [PurchaseOrder] update_status - Order PO-2026-00891 status changed from 'DRAFT' to 'PENDING_APPROVAL'.
+2026-06-15 15:34:45,312 [ERROR] [ExternalAPI] send_request - Connection timeout while connecting to vendor API endpoint (https://api.vendor-scm.internal/v1/orders).
+2026-06-15 15:34:45,315 [WARN] [ExternalAPI] retry_request - Retrying request to vendor API. Attempt 1 of 3...
+2026-06-15 15:34:48,620 [ERROR] [ExternalAPI] send_request - Connection timeout while connecting to vendor API endpoint (https://api.vendor-scm.internal/v1/orders).
+2026-06-15 15:34:48,622 [WARN] [ExternalAPI] retry_request - Retrying request to vendor API. Attempt 2 of 3...
+2026-06-15 15:34:51,930 [ERROR] [ExternalAPI] send_request - Connection timeout while connecting to vendor API endpoint (https://api.vendor-scm.internal/v1/orders).
+2026-06-15 15:34:51,933 [CRITICAL] [PurchaseOrder] process_failure - Failed to send Purchase Order PO-2026-00891 to external vendor after 3 attempts. Task aborted.
+2026-06-15 15:36:01,004 [INFO] [UserSession] logout_request - User 'user_admin_01' logged out. Session destroyed.
+2026-06-15 15:40:12,778 [INFO] [SystemGC] run_gc - Periodic garbage collection completed. Memory reclaimed: 142MB.
+2026-06-15 15:30:01,234 [INFO] [MainThread] application_start - B2B SCM Application initialized successfully.
+2026-06-15 15:30:05,112 [INFO] [ConnectionPool] db_connect - Successfully connected to the database cluster (Node-01).
+2026-06-15 15:31:12,456 [INFO] [UserSession] login_request - User 'user_admin_01' requested login from IP 192.168.10.45.
+2026-06-15 15:31:13,012 [INFO] [UserSession] login_success - User 'user_admin_01' logged in. Session token generated.
+2026-06-15 15:32:20,889 [INFO] [PurchaseOrder] create_order - New purchase order created. OrderID: PO-2026-00891.
+2026-06-15 15:32:22,104 [WARN] [InventoryService] check_stock - Safety stock level warning for ItemID: ITEM-9940. Current stock: 12.
+2026-06-15 15:33:05,556 [INFO] [PurchaseOrder] update_status - Order PO-2026-00891 status changed from 'DRAFT' to 'PENDING_APPROVAL'.
+2026-06-15 15:34:45,312 [ERROR] [ExternalAPI] send_request - Connection timeout while connecting to vendor API endpoint (https://api.vendor-scm.internal/v1/orders).
+2026-06-15 15:34:45,315 [WARN] [ExternalAPI] retry_request - Retrying request to vendor API. Attempt 1 of 3...
+2026-06-15 15:34:48,620 [ERROR] [ExternalAPI] send_request - Connection timeout while connecting to vendor API endpoint (https://api.vendor-scm.internal/v1/orders).
+2026-06-15 15:34:48,622 [WARN] [ExternalAPI] retry_request - Retrying request to vendor API. Attempt 2 of 3...
+2026-06-15 15:34:51,930 [ERROR] [ExternalAPI] send_request - Connection timeout while connecting to vendor API endpoint (https://api.vendor-scm.internal/v1/orders).
+2026-06-15 15:34:51,933 [CRITICAL] [PurchaseOrder] process_failure - Failed to send Purchase Order PO-2026-00891 to external vendor after 3 attempts. Task aborted.
+2026-06-15 15:36:01,004 [INFO] [UserSession] logout_request - User 'user_admin_01' logged out. Session destroyed.
+2026-06-15 15:40:12,778 [INFO] [SystemGC] run_gc - Periodic garbage collection completed. Memory reclaimed: 142MB.
+2026-06-15 15:30:01,234 [INFO] [MainThread] application_start - B2B SCM Application initialized successfully.
+2026-06-15 15:30:05,112 [INFO] [ConnectionPool] db_connect - Successfully connected to the database cluster (Node-01).
+2026-06-15 15:31:12,456 [INFO] [UserSession] login_request - User 'user_admin_01' requested login from IP 192.168.10.45.
+2026-06-15 15:31:13,012 [INFO] [UserSession] login_success - User 'user_admin_01' logged in. Session token generated.
+2026-06-15 15:32:20,889 [INFO] [PurchaseOrder] create_order - New purchase order created. OrderID: PO-2026-00891.
+2026-06-15 15:32:22,104 [WARN] [InventoryService] check_stock - Safety stock level warning for ItemID: ITEM-9940. Current stock: 12.
+2026-06-15 15:33:05,556 [INFO] [PurchaseOrder] update_status - Order PO-2026-00891 status changed from 'DRAFT' to 'PENDING_APPROVAL'.
+2026-06-15 15:34:45,312 [ERROR] [ExternalAPI] send_request - Connection timeout while connecting to vendor API endpoint (https://api.vendor-scm.internal/v1/orders).
+2026-06-15 15:34:45,315 [WARN] [ExternalAPI] retry_request - Retrying request to vendor API. Attempt 1 of 3...
+2026-06-15 15:34:48,620 [ERROR] [ExternalAPI] send_request - Connection timeout while connecting to vendor API endpoint (https://api.vendor-scm.internal/v1/orders).
+2026-06-15 15:34:48,622 [WARN] [ExternalAPI] retry_request - Retrying request to vendor API. Attempt 2 of 3...
+2026-06-15 15:34:51,930 [ERROR] [ExternalAPI] send_request - Connection timeout while connecting to vendor API endpoint (https://api.vendor-scm.internal/v1/orders).
+2026-06-15 15:34:51,933 [CRITICAL] [PurchaseOrder] process_failure - Failed to send Purchase Order PO-2026-00891 to external vendor after 3 attempts. Task aborted.
+2026-06-15 15:36:01,004 [INFO] [UserSession] logout_request - User 'user_admin_01' logged out. Session destroyed.
+2026-06-15 15:40:12,778 [INFO] [SystemGC] run_gc - Periodic garbage collection completed. Memory reclaimed: 142MB.
+2026-06-15 15:30:01,234 [INFO] [MainThread] application_start - B2B SCM Application initialized successfully.
+2026-06-15 15:30:05,112 [INFO] [ConnectionPool] db_connect - Successfully connected to the database cluster (Node-01).
+2026-06-15 15:31:12,456 [INFO] [UserSession] login_request - User 'user_admin_01' requested login from IP 192.168.10.45.
+2026-06-15 15:31:13,012 [INFO] [UserSession] login_success - User 'user_admin_01' logged in. Session token generated.
+2026-06-15 15:32:20,889 [INFO] [PurchaseOrder] create_order - New purchase order created. OrderID: PO-2026-00891.
+2026-06-15 15:32:22,104 [WARN] [InventoryService] check_stock - Safety stock level warning for ItemID: ITEM-9940. Current stock: 12.
+2026-06-15 15:33:05,556 [INFO] [PurchaseOrder] update_status - Order PO-2026-00891 status changed from 'DRAFT' to 'PENDING_APPROVAL'.
+2026-06-15 15:34:45,312 [ERROR] [ExternalAPI] send_request - Connection timeout while connecting to vendor API endpoint (https://api.vendor-scm.internal/v1/orders).
+2026-06-15 15:34:45,315 [WARN] [ExternalAPI] retry_request - Retrying request to vendor API. Attempt 1 of 3...
+2026-06-15 15:34:48,620 [ERROR] [ExternalAPI] send_request - Connection timeout while connecting to vendor API endpoint (https://api.vendor-scm.internal/v1/orders).
+2026-06-15 15:34:48,622 [WARN] [ExternalAPI] retry_request - Retrying request to vendor API. Attempt 2 of 3...
+2026-06-15 15:34:51,930 [ERROR] [ExternalAPI] send_request - Connection timeout while connecting to vendor API endpoint (https://api.vendor-scm.internal/v1/orders).
+2026-06-15 15:34:51,933 [CRITICAL] [PurchaseOrder] process_failure - Failed to send Purchase Order PO-2026-00891 to external vendor after 3 attempts. Task aborted.
+2026-06-15 15:36:01,004 [INFO] [UserSession] logout_request - User 'user_admin_01' logged out. Session destroyed.
+2026-06-15 15:40:12,778 [INFO] [SystemGC] run_gc - Periodic garbage collection completed. Memory reclaimed: 142MB.
+2026-06-15 15:30:01,234 [INFO] [MainThread] application_start - B2B SCM Application initialized successfully.
+2026-06-15 15:30:05,112 [INFO] [ConnectionPool] db_connect - Successfully connected to the database cluster (Node-01).
+2026-06-15 15:31:12,456 [INFO] [UserSession] login_request - User 'user_admin_01' requested login from IP 192.168.10.45.
+2026-06-15 15:31:13,012 [INFO] [UserSession] login_success - User 'user_admin_01' logged in. Session token generated.
+2026-06-15 15:32:20,889 [INFO] [PurchaseOrder] create_order - New purchase order created. OrderID: PO-2026-00891.
+2026-06-15 15:32:22,104 [WARN] [InventoryService] check_stock - Safety stock level warning for ItemID: ITEM-9940. Current stock: 12.
+2026-06-15 15:33:05,556 [INFO] [PurchaseOrder] update_status - Order PO-2026-00891 status changed from 'DRAFT' to 'PENDING_APPROVAL'.
+2026-06-15 15:34:45,312 [ERROR] [ExternalAPI] send_request - Connection timeout while connecting to vendor API endpoint (https://api.vendor-scm.internal/v1/orders).
+2026-06-15 15:34:45,315 [WARN] [ExternalAPI] retry_request - Retrying request to vendor API. Attempt 1 of 3...
+2026-06-15 15:34:48,620 [ERROR] [ExternalAPI] send_request - Connection timeout while connecting to vendor API endpoint (https://api.vendor-scm.internal/v1/orders).
+2026-06-15 15:34:48,622 [WARN] [ExternalAPI] retry_request - Retrying request to vendor API. Attempt 2 of 3...
+2026-06-15 15:34:51,930 [ERROR] [ExternalAPI] send_request - Connection timeout while connecting to vendor API endpoint (https://api.vendor-scm.internal/v1/orders).
+2026-06-15 15:34:51,933 [CRITICAL] [PurchaseOrder] process_failure - Failed to send Purchase Order PO-2026-00891 to external vendor after 3 attempts. Task aborted.
+2026-06-15 15:36:01,004 [INFO] [UserSession] logout_request - User 'user_admin_01' logged out. Session destroyed.
+2026-06-15 15:40:12,778 [INFO] [SystemGC] run_gc - Periodic garbage collection completed. Memory reclaimed: 142MB.
+2026-06-15 15:30:01,234 [INFO] [MainThread] application_start - B2B SCM Application initialized successfully.
+2026-06-15 15:30:05,112 [INFO] [ConnectionPool] db_connect - Successfully connected to the database cluster (Node-01).
+2026-06-15 15:31:12,456 [INFO] [UserSession] login_request - User 'user_admin_01' requested login from IP 192.168.10.45.
+2026-06-15 15:31:13,012 [INFO] [UserSession] login_success - User 'user_admin_01' logged in. Session token generated.
+2026-06-15 15:32:20,889 [INFO] [PurchaseOrder] create_order - New purchase order created. OrderID: PO-2026-00891.
+2026-06-15 15:32:22,104 [WARN] [InventoryService] check_stock - Safety stock level warning for ItemID: ITEM-9940. Current stock: 12.
+2026-06-15 15:33:05,556 [INFO] [PurchaseOrder] update_status - Order PO-2026-00891 status changed from 'DRAFT' to 'PENDING_APPROVAL'.
+2026-06-15 15:34:45,312 [ERROR] [ExternalAPI] send_request - Connection timeout while connecting to vendor API endpoint (https://api.vendor-scm.internal/v1/orders).
+2026-06-15 15:34:45,315 [WARN] [ExternalAPI] retry_request - Retrying request to vendor API. Attempt 1 of 3...
+2026-06-15 15:34:48,620 [ERROR] [ExternalAPI] send_request - Connection timeout while connecting to vendor API endpoint (https://api.vendor-scm.internal/v1/orders).
+2026-06-15 15:34:48,622 [WARN] [ExternalAPI] retry_request - Retrying request to vendor API. Attempt 2 of 3...
+2026-06-15 15:34:51,930 [ERROR] [ExternalAPI] send_request - Connection timeout while connecting to vendor API endpoint (https://api.vendor-scm.internal/v1/orders).
+2026-06-15 15:34:51,933 [CRITICAL] [PurchaseOrder] process_failure - Failed to send Purchase Order PO-2026-00891 to external vendor after 3 attempts. Task aborted.
+2026-06-15 15:36:01,004 [INFO] [UserSession] logout_request - User 'user_admin_01' logged out. Session destroyed.
+2026-06-15 15:40:12,778 [INFO] [SystemGC] run_gc - Periodic garbage collection completed. Memory reclaimed: 142MB.
