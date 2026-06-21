@@ -37,7 +37,8 @@ class ExtractBlock:
               Java: this.endRow   →  Python: self.end_row
               Java: other.startRow →  Python: other.start_row
         """
-        # TODO: 구현
+        # TODO:
+        return self.end_row +1 >= other.start_row
         pass
 
     def merge_with(self, other: 'ExtractBlock') -> None:
@@ -61,4 +62,11 @@ class ExtractBlock:
               Java: list.add(kw)                →  Python: list.append(kw)
         """
         # TODO: 구현
+        if other.end_row > self.end_row:
+            self.end_row = other.end_row
+
+        for kw in range(len(other.matched_keywords)):
+            if kw not in list:
+                list.append(kw)
+
         pass

@@ -15,6 +15,7 @@ Java 대응: com.logviewer.service.LogExtractService
 """
 import os
 import configparser
+from contextlib import nullcontext
 from datetime import datetime
 from typing import Optional
 
@@ -37,11 +38,11 @@ class LogExtractService:
         """
         Java 대응: public void execute(HttpServletRequest, HttpServletResponse)
 
-        Flask에서는 HttpServletResponse 대신 (content, filename) 튜플을 반환.
+        Flask에서는 HttpSer vletResponse 대신 (content, filename) 튜플을 반환.
         컨트롤러가 이 값으로 Response 객체를 만든다.
 
         Returns:
-            (content: bytes, filename: str)
+            (content: bytes,filename: str)
         Raises:
             Exception: 처리 중 오류 발생 시
         """
@@ -88,28 +89,28 @@ class LogExtractService:
         TODO 2: configparser 로 파일을 읽고 LogViewerConfig 객체를 채워 return 하세요
         """
         # TODO 1: 설정 파일 경로 결정
-        # external_path = os.environ.get('LOGVIEWER_CONFIG_PATH')
-        # if external_path:
-        #     props_path = external_path
-        # else:
-        #     props_path = os.path.join(os.path.dirname(__file__), '..', 'logviewer.properties')
+        external_path = os.environ.get('LOGVIEWER_CONFIG_PATH')
+        if external_path:
+            props_path = external_path
+        else:
+            props_path = os.path.join(os.path.dirname(__file__), '..', 'logviewer.properties')
 
         # TODO 2: configparser 로 읽기
-        # with open(props_path, 'r', encoding='utf-8') as f:
-        #     content = '[DEFAULT]\n' + f.read()
-        # parser = configparser.RawConfigParser()
-        # parser.read_string(content)
+        with open(props_path, 'r', encoding='utf-8') as f:
+            content = '[DEFAULT]\n' + f.read()
+        parser = configparser.RawConfigParser()
+        parser.read_string(content)
 
         # TODO 3: LogViewerConfig 객체 생성 및 필드 채우기
-        # cfg = LogViewerConfig()
-        # cfg.file_path          = parser.get('DEFAULT', 'logviewer.file.path',          fallback='').strip()
-        # cfg.file_encoding      = parser.get('DEFAULT', 'logviewer.file.encoding',      fallback='UTF-8').strip()
-        # cfg.datetime_condition = parser.get('DEFAULT', 'logviewer.condition.datetime', fallback='').strip()
-        # cfg.context_lines      = self._parse_context_lines(parser.get('DEFAULT', 'logviewer.context.lines', fallback='10'))
-        # cfg.output_prefix      = parser.get('DEFAULT', 'logviewer.output.prefix',      fallback='extract').strip()
-        # cfg.allowed_base_dir   = parser.get('DEFAULT', 'logviewer.allowed.basedir',    fallback='').strip()
-        # cfg.keywords           = self._parse_keywords(parser.get('DEFAULT', 'logviewer.condition.keywords', fallback=''))
-        # return cfg
+        cfg = LogViewerConfig()
+        cfg.file_path          = parser.get('DEFAULT', 'logviewer.file.path',          fallback='').strip()
+        cfg.file_encoding      = parser.get('DEFAULT', 'logviewer.file.encoding',      fallback='UTF-8').strip()
+        cfg.datetime_condition = parser.get('DEFAULT', 'logviewer.condition.datetime', fallback='').strip()
+        cfg.context_lines      = self._parse_context_lines(parser.get('DEFAULT', 'logviewer.context.lines', fallback='10'))
+        cfg.output_prefix      = parser.get('DEFAULT', 'logviewer.output.prefix',      fallback='extract').strip()
+        cfg.allowed_base_dir   = parser.get('DEFAULT', 'logviewer.allowed.basedir',    fallback='').strip()
+        cfg.keywords           = self._parse_keywords(parser.get('DEFAULT', 'logviewer.condition.keywords', fallback=''))
+        return cfg
         pass
 
     def _apply_request_params(self, params: dict, config: LogViewerConfig) -> None:
@@ -197,7 +198,11 @@ class LogExtractService:
 
         TODO: 구현
         """
-        # TODO: 구현
+        # TODO:
+        has_date_time = bool(config.datetime_condition.strip())
+        has_key_words = bool(config.keywords)
+        if not has_date_time and not has_key_words:
+            raise Exception("날짜조건 or Keyword 중 하나 이상 입력 필요함 ")
         pass
 
     # =========================================================================
@@ -231,6 +236,9 @@ class LogExtractService:
         """
         results: list[MatchResult] = []
         # TODO: 구현
+
+
+
         return results
 
     def _match_line(self, line: str, config: LogViewerConfig) -> Optional[str]:
@@ -264,6 +272,17 @@ class LogExtractService:
         TODO: 구현
         """
         # TODO: 구현
+        has_date_time = bool(config.datetime_condition.strip())
+        has_key_words = bool(config.keywords)
+
+        date_time_ok = not has_date_time or bool(config.datetime_condition in line)
+
+        if has_key_words:
+            for kwd in config.keywords:
+                if kwd in line and date_time_ok:
+                    return kwd
+            return None
+
         pass
 
     # =========================================================================
@@ -395,6 +414,19 @@ class LogExtractService:
 
         TODO: 구현
         """
+        sb = "========== [Row:"
+        sb += block.start_row + "-" + block.end_row
+        sb += " / keyword: "
+
+        for i in range(len(block.matched_keywords)):
+            if i>0:
+                sb += '"' + block.matched_keywords[i]
+
+        sb += "] =========="
+        return str(sb)
+
+
+
         # TODO: 구현
         pass
 
@@ -412,6 +444,8 @@ class LogExtractService:
         TODO: 구현
         """
         # TODO: 구현
+        return prefix + "_" + datetime.now().strftime(self.FILENAME_FPRMAT)
+
         pass
 
     @staticmethod
@@ -432,6 +466,11 @@ class LogExtractService:
         TODO: 구현
         """
         # TODO: 구현
+        result = []
+        if not raw.strip():
+            return result
+
+        return [kw.strip() for kw in raw.split(',') if kw.strip()]
         pass
 
     @staticmethod
@@ -456,4 +495,12 @@ class LogExtractService:
         TODO: 구현
         """
         # TODO: 구현
+
+        try:
+            contextLine = int(value.strip())
+            return max(0, contextLine)
+
+        except:
+            return 10
+
         pass

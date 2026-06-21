@@ -51,5 +51,7 @@ print("2.extract_list = ----------------------------")
 print("추출 Line = ", line_list)
 print()
 print("<추출 내용>")
-print(extract_list)
+# print(extract_list)
 
+# 문자열이 비어있지 않은 상태인지 체크 - print(bool(not "abc".strip())) = False
+print(bool(not "abc".strip()))

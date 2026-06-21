@@ -65,6 +65,7 @@ def download():
 
         # TODO 2: 서비스 호출
         # content, filename = extract_service.execute(params)
+        extract_service.execute(params) # (2026.06.21)
 
         # TODO 3: 다운로드 Response 반환
         pass
