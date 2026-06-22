@@ -234,10 +234,25 @@ class LogExtractService:
 
         TODO: 구현
         """
+        # 이런 형식도 가능 -> name: str = 'Mike'
+        # 이런 형식도 가능2 -> ages: list = [12, 20, 32]
+        #                   변수명 : 형식 = 값 형태인듯?
+
         results: list[MatchResult] = []
         # TODO: 구현
+        charset = config.file_encoding
+        with open(config.file_path, 'r', encoding=charset) as f:
 
+            line_number = 0  # 이 값도 enumerate 에서 가져올 수 있음
 
+            # enumerate : Index, value (line) 순서로 출력
+            for index, line in enumerate(f, start=1):
+                line = line.rstrip('\\n')   # 읽어들인 1줄의 오른쪽에서 줄바꿈 문자 제거
+
+                matched = self._match_line(self, line, config)
+
+                if matched is not None:
+                    results.append(index, matched)
 
         return results
 
@@ -311,6 +326,12 @@ class LogExtractService:
         """
         blocks: list[ExtractBlock] = []
         # TODO: 구현
+        for match in matches:
+            start = max(1, match.line_number) - context_lines
+            end = match.line_number + context_lines
+
+            blocks.append(ExtractBlock(start, end, [match.matched_keyword]))
+
         return blocks
 
     def _merge_blocks(self, blocks: list[ExtractBlock]) -> list[ExtractBlock]:
@@ -338,6 +359,17 @@ class LogExtractService:
         """
         merged: list[ExtractBlock] = []
         # TODO: 구현
+        for current in blocks:
+            if not merged:
+                merged.append(current)
+                continue
+
+        last = merged[-1]
+        if(last.overlaps_or_adjacent(current)):
+            last.merge_with(current)
+        else:
+            merged.append(current)
+
         return merged
 
     # =========================================================================
