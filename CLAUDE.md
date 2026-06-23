@@ -43,3 +43,36 @@
 ## 미완성 TODO (log_download_controller.py)
 - TODO 3: 다운로드 Response 반환 구현 및 `pass` 제거
 - except 블록: 에러 응답 반환 구현 및 `pass` 제거
+
+## Java 프로젝트 실행 준비 (LogViewer)
+
+### 프로젝트 구조
+- IntelliJ 모듈 타입: `JAVA_EE_MODULE` (Dynamic Web Project 설정 이미 되어있음)
+- JDK 11, Spring MVC 5.3.39, Tomcat 9 기반
+- `web/WEB-INF/dispatcher-servlet.xml`, `web/WEB-INF/web.xml` 존재
+
+### 현재 상태
+| 항목 | 상태 |
+|---|---|
+| JDK 11 | 설치됨 |
+| Tomcat 9.0.117 | 다운로드 완료, `C:\selfStudy\server\apache-tomcat-9.0.117\` 에 배치 필요 |
+| Spring 5.3.39 JAR 8개 | 미준비 (내일 진행 예정) |
+
+### 필요한 Spring JAR 목록 (web/WEB-INF/lib/ 에 배치)
+- spring-webmvc-5.3.39.jar
+- spring-context-5.3.39.jar
+- spring-core-5.3.39.jar
+- spring-beans-5.3.39.jar
+- spring-web-5.3.39.jar
+- spring-aop-5.3.39.jar
+- spring-expression-5.3.39.jar
+- spring-jcl-5.3.39.jar
+
+### JAR 다운로드 방법
+- mvnrepository.com 에서 직접 검색하여 다운로드
+- 또는 Maven CLI: `mvn dependency:get -Dartifact=org.springframework:spring-webmvc:5.3.39`
+
+### Spring JAR 준비 후 IntelliJ Run 설정 순서
+1. `Run → Edit Configurations → + → Tomcat Server → Local`
+2. `Configure...` 에서 Tomcat 설치 경로 지정
+3. `Deployment` 탭 → `+` → `Artifact` → `LogViewer:war exploded` 선택
