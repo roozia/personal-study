@@ -65,13 +65,19 @@ def download():
 
         # TODO 2: 서비스 호출
         # content, filename = extract_service.execute(params)
-        extract_service.execute(params) # (2026.06.21)
+        content, filename = extract_service.execute(params) # (2026.06.21) 여러 개의 Return 가능
 
         # TODO 3: 다운로드 Response 반환
+        response = Response(content, mimetype='text/plainl charset=utf-8')
+        response.status_code = 200
+        response.headers['Content-Disposition'] = f'attachment; filename="{file_name}"'
+
+        return response
+
         pass
 
     except Exception as e:
         # Java 대응: sendError(response, e.getMessage())
         # TODO: 에러 응답 반환
         # 힌트: return Response(f'[오류] {str(e)}', status=500, mimetype='text/plain; charset=utf-8')
-        pass
+        return Response(f'[Error] {str(e)}, status=500, mimetype='text/plain; charset=utf-8')

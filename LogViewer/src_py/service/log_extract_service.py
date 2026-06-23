@@ -61,6 +61,7 @@ class LogExtractService:
     def _load_config(self) -> LogViewerConfig:
         """
         Java 대응: private LogViewerConfig loadConfig()
+                :  public static LogViewerConfig load() > private static Properties readProperties() 이쪽인듯.
 
         logviewer.properties 를 읽어 LogViewerConfig 객체를 반환한다.
 
@@ -89,11 +90,16 @@ class LogExtractService:
         TODO 2: configparser 로 파일을 읽고 LogViewerConfig 객체를 채워 return 하세요
         """
         # TODO 1: 설정 파일 경로 결정
+        LOGVIEWER_CONFIG_PATH = "logviewer.properties"
+        CLASSPATH_DEFAULT     = "./logviewer.properties"
+
         external_path = os.environ.get('LOGVIEWER_CONFIG_PATH')
+
         if external_path:
             props_path = external_path
         else:
-            props_path = os.path.join(os.path.dirname(__file__), '..', 'logviewer.properties')
+            props_path = os.path.join(os.path.dirname(__file__), '..', CLASSPATH_DEFAULT)
+            # os.path.join("/A/B/C", "file.py")  -> /A/B/C/file.py
 
         # TODO 2: configparser 로 읽기
         with open(props_path, 'r', encoding='utf-8') as f:
@@ -376,8 +382,7 @@ class LogExtractService:
     # Pass 2: 발췌 내용 출력
     # =========================================================================
 
-    def _write_extract(self, file_path: str, file_encoding: str,
-                       blocks: list[ExtractBlock]) -> bytes:
+    def _write_extract(self, file_path: str, file_encoding: str, blocks: list[ExtractBlock]) -> bytes:
         """
         Java 대응: private void writeExtract(String, String, List<ExtractBlock>, OutputStream)
 
@@ -417,6 +422,24 @@ class LogExtractService:
         TODO: 구현
         """
         # TODO: 구현
+        output = []
+
+        with open(file_path, 'r', encoding=file_encoding) as f:
+
+            # enumerate : Index, value (line) 순서로 출력
+            for current_line, line in enumerate(f, start=1):
+
+                # File을 한 번 읽으면서 Block 들을 확인.
+                for block in blocks:
+                    output.append(self._build_header(block))
+                    output.append('')
+
+                    while current_line >= block.start_row and current_line < block.end_row:
+                        output.append(line)
+
+                    output.append('')
+
+        return output
         pass
 
     # =========================================================================
