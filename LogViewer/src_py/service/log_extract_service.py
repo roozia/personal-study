@@ -117,7 +117,7 @@ class LogExtractService:
         cfg.allowed_base_dir   = parser.get('DEFAULT', 'logviewer.allowed.basedir',    fallback='').strip()
         cfg.keywords           = self._parse_keywords(parser.get('DEFAULT', 'logviewer.condition.keywords', fallback=''))
         return cfg
-        pass
+
 
     def _apply_request_params(self, params: dict, config: LogViewerConfig) -> None:
         """
@@ -502,10 +502,6 @@ class LogExtractService:
         return str(sb)
 
 
-
-        # TODO: 구현
-        pass
-
     def _build_filename(self, prefix: str) -> str:
         """
         Java 대응: private String buildFilename(String)
@@ -547,7 +543,7 @@ class LogExtractService:
             return result
 
         return [kw.strip() for kw in raw.split(',') if kw.strip()]
-        pass
+
 
     @staticmethod
     def _parse_context_lines(value: str) -> int:
@@ -579,4 +575,4 @@ class LogExtractService:
         except:
             return 10
 
-        pass
+
