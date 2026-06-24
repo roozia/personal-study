@@ -183,7 +183,22 @@ class LogExtractService:
               오류 시 raise Exception("메시지")  →  Java: throw new IOException("메시지")
         """
         # TODO: 구현
-        pass
+
+        if not file_path:
+            raise Exception("logviewer.file.path 설정이 비어 있습니다.")
+
+        normalized = os.path.abspath(file_path)
+
+        if not allowed_base_dir:
+            base_dir = os.path.abspath(allowed_base_dir)
+            if not base_dir:
+                raise Exception("허용되지 않은 경로입니다. - file_path: " + file_path)
+
+        if not os.path.exists(normalized):
+            raise Exception("파일을 찾을 수 없습니다. - file_path: " + file_path)
+
+        if not os.access(normalized, os.R_OK):
+            raise Exception("파일을 읽을 수 없습니다. (권한 부족) - file_path: " + file_path)
 
     def _validate_condition(self, config: LogViewerConfig) -> None:
         """
@@ -209,7 +224,7 @@ class LogExtractService:
         has_key_words = bool(config.keywords)
         if not has_date_time and not has_key_words:
             raise Exception("날짜조건 or Keyword 중 하나 이상 입력 필요함 ")
-        pass
+
 
     # =========================================================================
     # Pass 1: 매칭 행 수집
@@ -255,10 +270,10 @@ class LogExtractService:
             for index, line in enumerate(f, start=1):
                 line = line.rstrip('\\n')   # 읽어들인 1줄의 오른쪽에서 줄바꿈 문자 제거
 
-                matched = self._match_line(self, line, config)
+                matched = self._match_line(line, config)
 
                 if matched is not None:
-                    results.append(index, matched)
+                    results.append(MatchResult(line_number, matched))
 
         return results
 
@@ -304,7 +319,11 @@ class LogExtractService:
                     return kwd
             return None
 
-        pass
+        # 날짜 조건만 있는 경우
+        if date_time_ok:
+            return config.datetime_condition
+        else:
+            return None
 
     # =========================================================================
     # 블록 구성 및 병합
@@ -333,7 +352,7 @@ class LogExtractService:
         blocks: list[ExtractBlock] = []
         # TODO: 구현
         for match in matches:
-            start = max(1, match.line_number) - context_lines
+            start = max(1, match.line_number - context_lines)
             end = match.line_number + context_lines
 
             blocks.append(ExtractBlock(start, end, [match.matched_keyword]))
@@ -364,17 +383,18 @@ class LogExtractService:
         TODO: 구현
         """
         merged: list[ExtractBlock] = []
+
         # TODO: 구현
         for current in blocks:
             if not merged:
                 merged.append(current)
                 continue
 
-        last = merged[-1]
-        if(last.overlaps_or_adjacent(current)):
-            last.merge_with(current)
-        else:
-            merged.append(current)
+            last = merged[-1]
+            if(last.overlaps_or_adjacent(current)):
+                last.merge_with(current)
+            else:
+                merged.append(current)
 
         return merged
 

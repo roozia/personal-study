@@ -65,8 +65,8 @@ class ExtractBlock:
         if other.end_row > self.end_row:
             self.end_row = other.end_row
 
-        for kw in range(len(other.matched_keywords)):
+        for kw in other.matched_keywords:
             if kw not in list:
                 list.append(kw)
 
-        pass
+
