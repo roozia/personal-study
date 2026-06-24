@@ -490,12 +490,13 @@ class LogExtractService:
         TODO: 구현
         """
         sb = "========== [Row:"
-        sb += block.start_row + "-" + block.end_row
+        sb += str(block.start_row) + "-" + str(block.end_row)
         sb += " / keyword: "
 
         for i in range(len(block.matched_keywords)):
             if i>0:
-                sb += '"' + block.matched_keywords[i]
+                sb += ", "
+            sb += '"' + block.matched_keywords[i]
 
         sb += "] =========="
         return str(sb)
@@ -519,9 +520,9 @@ class LogExtractService:
         TODO: 구현
         """
         # TODO: 구현
-        return prefix + "_" + datetime.now().strftime(self.FILENAME_FPRMAT)
+        timestamp = datetime.now().strftime(self.FILENAME_FORMAT)
+        return prefix + "_" + timestamp + ".log"
 
-        pass
 
     @staticmethod
     def _parse_keywords(raw: str) -> list[str]:
