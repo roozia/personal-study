@@ -137,7 +137,22 @@ class LogExtractService:
         TODO: filePath, datetimeCondition, contextLines, keywords 4개 파라미터 처리
         """
         # TODO: 구현
-        pass
+        file_path = params.get('filePath', '').strip()
+        if file_path:
+            config.file_path = file_path
+
+        datetime_condition = params.get('datetimeCondition', '').strip()
+        if datetime_condition:
+            config.datetime_condition = datetime_condition
+
+        context_lines = params.get('contextLines', '').strip()
+        if context_lines:
+            config.context_lines = int(context_lines)
+
+        keywords = params.get('keywords', ' ').strip()
+        if keywords:
+           config.keywords = config._parse_keywords(keywords)
+
 
     # =========================================================================
     # 발췌 처리
@@ -189,9 +204,10 @@ class LogExtractService:
 
         normalized = os.path.abspath(file_path)
 
-        if not allowed_base_dir:
+        if allowed_base_dir:
             base_dir = os.path.abspath(allowed_base_dir)
-            if not base_dir:
+
+            if not normalized.startswith(base_dir):
                 raise Exception("허용되지 않은 경로입니다. - file_path: " + file_path)
 
         if not os.path.exists(normalized):
@@ -264,16 +280,14 @@ class LogExtractService:
         charset = config.file_encoding
         with open(config.file_path, 'r', encoding=charset) as f:
 
-            line_number = 0  # 이 값도 enumerate 에서 가져올 수 있음
-
             # enumerate : Index, value (line) 순서로 출력
             for index, line in enumerate(f, start=1):
-                line = line.rstrip('\\n')   # 읽어들인 1줄의 오른쪽에서 줄바꿈 문자 제거
+                line = line.rstrip('\n')   # 읽어들인 1줄의 오른쪽에서 줄바꿈 문자 제거
 
                 matched = self._match_line(line, config)
 
                 if matched is not None:
-                    results.append(MatchResult(line_number, matched))
+                    results.append(MatchResult(index, matched))
 
         return results
 
@@ -434,10 +448,29 @@ class LogExtractService:
             output.append('')                    ← 블록 사이 빈 줄 (writer.println())
             return '\\n'.join(output).encode('utf-8')  ← bytes 변환
 
-            파일 읽기:
+            파일 읽기 (주의: enumerate(f)는 "모든 줄을 한 번씩 자동 순회"하는 패턴이라
+            블록 경계마다 건너뛰거나 멈추는 이 메서드와는 안 맞음. Java의 reader.readLine()처럼
+            "필요한 시점에 한 줄만 꺼내기"가 가능한 next(f, None)을 쓸 것):
+
             with open(file_path, 'r', encoding=file_encoding) as f:
-                for current_line, line in enumerate(f, start=1):
-                    ...
+                current_line = 0
+                for block in blocks:                              # Java: for (ExtractBlock block : blocks)
+                    while current_line < block.start_row - 1:      # Java: while (currentLine < block.startRow - 1)
+                        line = next(f, None)                       # Java: reader.readLine()
+                        if line is None:                           # Java: if (... == null) { ...; return; }
+                            return '\\n'.join(output).encode('utf-8')
+                        current_line += 1
+
+                    output.append(self._build_header(block))
+
+                    while current_line < block.end_row:            # Java: while (currentLine < block.endRow)
+                        line = next(f, None)
+                        if line is None:                           # Java: if (line == null) break;
+                            break
+                        current_line += 1
+                        output.append(line.rstrip('\\n'))
+
+                    output.append('')                               # Java: writer.println()
 
         TODO: 구현
         """
@@ -446,21 +479,31 @@ class LogExtractService:
 
         with open(file_path, 'r', encoding=file_encoding) as f:
 
-            # enumerate : Index, value (line) 순서로 출력
-            for current_line, line in enumerate(f, start=1):
+           current_line = 0
 
-                # File을 한 번 읽으면서 Block 들을 확인.
-                for block in blocks:
-                    output.append(self._build_header(block))
-                    output.append('')
+           for block in blocks:
 
-                    while current_line >= block.start_row and current_line < block.end_row:
-                        output.append(line)
+               # 블록 시작 전 까지 건너뛰기
+               while current_line < block.start_row - 1:
+                   line = next(f, None)
+                   if not line:
+                       return '\n'.join(output).encode('utf-8') # 각각의 list 요소를 줄바꿈(\n) 문자로 연결 + utf-8로 Encoding
+                   current_line += 1
 
-                    output.append('')
+               output.append(self._build_header(block))
 
-        return output
-        pass
+               # 블록 범위 행 출력
+               while current_line < block.end_row:
+                   line = next(f, None)
+                   if not line:
+                       break
+                   current_line += 1
+                   output.append(line.rstrip('\n'))
+
+               output.append('')
+
+        return '\n'.join(output).encode('utf-8')
+
 
     # =========================================================================
     # 유틸
@@ -496,7 +539,7 @@ class LogExtractService:
         for i in range(len(block.matched_keywords)):
             if i>0:
                 sb += ", "
-            sb += '"' + block.matched_keywords[i]
+            sb += '"' + block.matched_keywords[i] + '"'
 
         sb += "] =========="
         return str(sb)

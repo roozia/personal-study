@@ -7,59 +7,48 @@
 - Java로 만든 프로그램을 Python으로 변환하는 방식으로 Python 문법 학습 중
 - 현재 대상 프로젝트: `LogViewer` (Java → Python 변환)
 
-## 현재 작업 파일 및 구현 상태 (2026.06.23 기준)
+## 현재 작업 파일 및 구현 상태 (2026.06.25 기준 — 전체 버그 수정 완료)
 
 전체 흐름: `app.py` → `controller/log_download_controller.py` → `service/log_extract_service.py` → `model/*`
 
 ### model/extract_block.py
 - `overlaps_or_adjacent` ✅ 구현 완료 (`self.end_row + 1 >= other.start_row`)
-- `merge_with` ❌ 버그 있음
-  - `for kw in range(len(other.matched_keywords))` → 인덱스(정수)를 순회하고 있음. 키워드 문자열 자체를 순회해야 함
-  - `if kw not in list: list.append(kw)` → `list`는 변수가 아니라 파이썬 내장 타입 이름. `self.matched_keywords`를 써야 함
+  - `return` 뒤에 죽은 코드 `pass` 한 줄 남아있음 (동작엔 영향 없음, 정리 대상으로만 남겨둠)
+- `merge_with` ✅ 구현 완료 — `if kw not in self.matched_keywords: self.matched_keywords.append(kw)` 로 수정됨 (`list` 내장 타입 쓰던 버그 해결)
 
 ### model/match_result.py, model/log_viewer_config.py
 - ✅ 둘 다 템플릿 그대로 완성 상태 (수정 불필요)
 
-### service/log_extract_service.py
+### service/log_extract_service.py — 전체 메서드 구현 완료
 | 메서드 | 상태 | 비고 |
 |---|---|---|
-| `_load_config` | ✅ 구현됨 | configparser + `[DEFAULT]` 더미 섹션 처리 적용 |
-| `_apply_request_params` | ❌ 미구현 | 아직 `pass` 상태 |
-| `_extract` | ✅ | 템플릿 그대로, 정상 |
-| `_validate_path` | ❌ 미구현 | 아직 `pass` 상태 |
-| `_validate_condition` | ✅ 구현 완료 | |
-| `_find_matches` | ❌ 버그 | `self._match_line(self, line, config)` — self 중복 전달(TypeError). `results.append(index, matched)` — append는 인자 1개만 가능, `MatchResult(index, matched)` 객체로 감싸서 넣어야 함. `line.rstrip('\\n')` — `\\n`은 백슬래시+n 두 글자, 줄바꿈이 아님 → `'\n'`로 수정 |
-| `_match_line` | ❌ 미완성 | 키워드 없이 날짜 조건만 있는 경우의 반환문이 없음. 함수 끝에 `return config.datetime_condition if date_time_ok else None` 필요 |
-| `_build_blocks` | ❌ 버그 | `max(1, match.line_number) - context_lines` → 연산자 우선순위 오류. `max(1, match.line_number - context_lines)`가 맞음 |
-| `_merge_blocks` | ❌ 버그 | `last = merged[-1]` 이하 로직이 `for` 루프 밖으로 빠져 있음(들여쓰기 문제) → 루프 안으로 이동해야 매 블록마다 병합 판단함 |
-| `_write_extract` | ❌ 버그(가장 심각) | 블록 루프가 라인 루프 안에 있어서 매 줄마다 모든 블록 헤더가 중복 출력됨. `while current_line >= block.start_row ...` → 조건이 안 바뀌는 `while`이라 **무한루프 발생**, `if`로 바꿔야 함. 반환형은 `-> bytes`인데 list를 그대로 반환 중 → `'\n'.join(output).encode('utf-8')` 필요 |
-| `_build_header` | ❌ 버그 | `block.start_row + "-"` → int와 str 직접 연결 시도(TypeError). 키워드 루프에서 `if i>0` 조건 때문에 0번째 키워드가 누락됨. 닫는 `"` 없음 |
-| `_build_filename` | ❌ 오타 | `self.FILENAME_FPRMAT` → `self.FILENAME_FORMAT` (AttributeError) |
-| `_parse_keywords` | ✅ 구현 완료 | |
-| `_parse_context_lines` | ✅ 구현 완료 | |
+| `_load_config` | ✅ | configparser + `[DEFAULT]` 더미 섹션 처리 |
+| `_apply_request_params` | ✅ | `param`→`params` 오타 수정 완료. 4개 필드 모두 처리됨. **남은 리스크**: 컨트롤러가 `request.form.get(key)`를 기본값 없이 호출해서 폼에 해당 필드가 전혀 없으면 `params[key]`가 `None`이 되고, `params.get(key, '')`는 키가 존재하면 기본값을 안 주기 때문에 `.strip()`에서 `AttributeError` 날 수 있음 (Java의 `trim()` 헬퍼가 했던 null 방어가 없음). 폼에 4개 필드가 항상 포함되면 문제 없음 — 실제 폼 구조 확인 필요 |
+| `_extract` | ✅ | 정상 |
+| `_validate_path` | ✅ | 조건 반전 문제 해결, `normalized.startswith(base_dir)` 경로 탈출 방지 체크 추가됨 |
+| `_validate_condition` | ✅ | |
+| `_find_matches` | ✅ | self 중복 전달 수정, `MatchResult` 객체 감싸기 적용, `index`로 줄번호 정상 기록, `rstrip('\n')`도 실제 줄바꿈 문자로 수정 완료 |
+| `_match_line` | ✅ | |
+| `_build_blocks` | ✅ | |
+| `_merge_blocks` | ✅ | |
+| `_write_extract` | ✅ | `for block in blocks`를 바깥 루프로, `next(f, None)`으로 Java의 `readLine()`처럼 필요한 시점에 한 줄씩 꺼내는 구조로 변경. 헤더 중복 출력/무한루프/list 반환 3개 버그 모두 해결, `return '\n'.join(output).encode('utf-8')`로 정상 반환 |
+| `_build_header` | ✅ | 키워드 양쪽에 닫는 `"` 추가 완료 |
+| `_build_filename` | ✅ | |
+| `_parse_keywords` | ✅ | |
+| `_parse_context_lines` | ✅ | |
 
-### controller/log_download_controller.py
-- import 오류(`from Flask` → `from flask`)는 2026.06.22 수정 완료
-- 파라미터 수집(TODO 1) ✅ 완료
-- 서비스 호출(TODO 2) ✅ 완료
-- 응답 반환(TODO 3) ❌ 버그 있음
-  - `mimetype='text/plainl charset=utf-8'` → 오타, `'text/plain; charset=utf-8'`로 수정
-  - `filename="{file_name}"` → 정의되지 않은 변수 참조(NameError). 실제 변수명은 `filename` (언더스코어 위치 다름)
-- except 블록 ❌ **SyntaxError 발생 중** — f-string 안에 따옴표가 중첩되면서 깨짐:
-  ```python
-  return Response(f'[Error] {str(e)}, status=500, mimetype='text/plain; charset=utf-8')
-  ```
-  올바른 형태: `return Response(f'[오류] {str(e)}', status=500, mimetype='text/plain; charset=utf-8')`
+### controller/log_download_controller.py — 완료
+- import 오류 수정 완료, TODO 1~3 모두 구현 완료
+- `mimetype='text/plain; charset=utf-8'` 세미콜론 추가 완료
+- except 블록 정상 동작 (`[Error]` 메시지, 기능상 문제 없음)
 
 ### logviewer.properties
 - `logviewer.file.path=../logs/sample.log` 로 상대경로 변경됨 (LogViewer 루트 기준 `log/` 디렉토리 활용 추정)
 
-## 다음에 할 일 (우선순위 순)
-1. `controller/log_download_controller.py`의 except 블록 SyntaxError부터 고친다 — 이게 안 고쳐지면 앱 자체가 import 단계에서 실행 안 됨
-2. `_write_extract`의 `while` → `if` 무한루프부터 고친다 — 정상 동작 시에도 멈춰버림
-3. `_find_matches`, `_build_blocks`, `_merge_blocks`, `_build_header`, `_build_filename` 순서로 디버깅
-4. `_validate_path`, `_apply_request_params` 구현 (아직 손 안 댄 부분)
-5. 전부 고친 후 `python app.py` → 브라우저로 실제 다운로드 테스트
+## 다음에 할 일 (우선순위 순, 2026.06.25 갱신)
+1. **`python app.py` 실행 → 브라우저로 실제 다운로드 테스트** — 코드 레벨 버그는 다 해결됐으니 이제 실제 동작 확인 단계
+2. `_apply_request_params`의 `None.strip()` 리스크 — 테스트 중 폼 필드 누락 시 에러나면 그때 가드 추가 (`request.form.get(key, '')`처럼 컨트롤러 쪽에 기본값 주는 것도 방법)
+3. `extract_block.py`의 죽은 코드 `pass` 정리 (선택사항, 동작엔 영향 없음)
 
 ## Java → Python 주요 변환 포인트
 | Java | Python (Flask) |
