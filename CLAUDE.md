@@ -7,7 +7,7 @@
 - Java로 만든 프로그램을 Python으로 변환하는 방식으로 Python 문법 학습 중
 - 현재 대상 프로젝트: `LogViewer` (Java → Python 변환)
 
-## 현재 작업 파일 및 구현 상태 (2026.06.25 기준 — 전체 버그 수정 완료)
+## 현재 작업 파일 및 구현 상태 (2026.06.25 기준 — Python 버전 전체 완료, 실제 다운로드 테스트까지 성공)
 
 전체 흐름: `app.py` → `controller/log_download_controller.py` → `service/log_extract_service.py` → `model/*`
 
@@ -45,10 +45,14 @@
 ### logviewer.properties
 - `logviewer.file.path=../logs/sample.log` 로 상대경로 변경됨 (LogViewer 루트 기준 `log/` 디렉토리 활용 추정)
 
-## 다음에 할 일 (우선순위 순, 2026.06.25 갱신)
-1. **`python app.py` 실행 → 브라우저로 실제 다운로드 테스트** — 코드 레벨 버그는 다 해결됐으니 이제 실제 동작 확인 단계
-2. `_apply_request_params`의 `None.strip()` 리스크 — 테스트 중 폼 필드 누락 시 에러나면 그때 가드 추가 (`request.form.get(key, '')`처럼 컨트롤러 쪽에 기본값 주는 것도 방법)
-3. `extract_block.py`의 죽은 코드 `pass` 정리 (선택사항, 동작엔 영향 없음)
+## Python 버전 완료 현황 (2026.06.25)
+- `python app.py` 실행 → 브라우저(`http://localhost:8080/logDownloadPy.html`)에서 실제 파일 다운로드까지 정상 동작 **확인 완료**
+- 중간에 겪은 환경 이슈: IntelliJ Python SDK를 3.14 → 3.12로 교체하면서 Flask가 새 인터프리터 환경에 없어 `ModuleNotFoundError` 발생 → `Settings → Project: LogViewer → Python Interpreter`에서 flask 재설치로 해결
+- `_apply_request_params`의 `None.strip()` 리스크는 실제 테스트에서 문제 없이 지나감 (폼이 4개 필드를 항상 포함해서 보냄) — 더 손볼 필요 없음
+- `extract_block.py`의 죽은 코드 `pass` 한 줄만 정리 대상으로 남아있음 (선택사항)
+
+## 다음 단계 — Java 원본 실행 준비로 전환
+Python 변환/실행이 끝났으니, 다음은 `## Java 프로젝트 실행 준비 (LogViewer)` 섹션(Tomcat 배치, Spring JAR 8개 준비)으로 넘어갈 차례.
 
 ## Java → Python 주요 변환 포인트
 | Java | Python (Flask) |
@@ -104,6 +108,30 @@
 ### f-string 안에서 따옴표 중첩 주의
 - `f'... {x}, mimetype='text/plain'` 처럼 같은 종류의 따옴표를 안에서 또 열면 문자열이 거기서 끊겨버려 SyntaxError 발생
 - 안쪽 따옴표는 바깥과 다른 종류(`'` vs `"`)를 쓰거나, f-string을 별도 변수로 분리할 것
+
+### next(iterator, default) — StopIteration 없이 안전하게 한 개씩 꺼내기
+- `next(f)`만 쓰면 끝에서 `StopIteration` 예외 발생, `next(f, None)`처럼 기본값을 주면 예외 대신 그 값 반환
+- Java의 `reader.readLine()`이 끝에서 `null`을 반환하는 것과 동일한 효과 (`if line is None:` ↔ `if (line == null)`)
+- `for line in f` / `enumerate(f)`는 "전체를 한 번에 자동 순회"하는 패턴이라, 블록 경계마다 건너뛰거나 멈추는 로직(`_write_extract`)엔 안 맞음 — 그럴 땐 `next()`로 필요한 시점에만 꺼내 써야 함
+
+### pip 버전 지정 문법과 셸 리다이렉션
+- `pip install flask>=3.0.0`처럼 직접 타이핑하면 셸이 `>`를 리다이렉션 기호로 잘못 해석할 수 있음 → `"flask>=3.0.0"`처럼 따옴표 필요
+- 이런 문제를 피하려고 `requirements.txt`에 적어두고 `pip install -r requirements.txt`로 설치하는 게 표준 방식
+
+### Python 인터프리터(버전)별로 패키지가 완전히 분리됨
+- IntelliJ에서 Python SDK를 3.14 → 3.12로 바꾸면, 이전 버전에 `pip install`했던 flask가 새 인터프리터에는 없음 (서로 별개의 site-packages)
+- Java의 JDK 버전을 바꿀 때 클래스패스에 jar를 다시 등록해야 하는 것과 비슷한 개념
+- 해결: `Settings → Project → Python Interpreter`에서 새 인터프리터 기준으로 패키지 재설치
+
+### breakpoint() — JS의 debugger;에 대응
+- Python 3.7+ 내장 함수, 코드에 `breakpoint()`를 넣으면 그 지점에서 실행이 멈추고 터미널이 pdb 대화형 모드(`(Pdb)`)로 바뀜
+- `n`(다음 줄), `s`(함수 안으로), `c`(계속), `p 변수명`(값 출력), `q`(종료)
+- 터미널에 직접 `python app.py`를 입력해 실행한 경우에도 동작함 (IDE 연결 여부와 무관)
+
+### IntelliJ 거터 breakpoint는 "Debug" 버튼으로 실행해야 작동함
+- 터미널에 `python app.py`를 직접 입력해서 실행하면, IntelliJ가 그 프로세스를 디버그 모드로 인식하지 못해 거터의 빨간 점 breakpoint가 무시됨
+- `app.py` 우클릭 → "Debug 'app'" (또는 벌레 아이콘)으로 실행해야 거터 breakpoint가 정상 작동
+- 멈춘 후 값 확인은 터미널 명령 없이 Debug 패널의 "Variables"에서 트리로 확인, 변수에 마우스 올리면 툴팁으로도 확인 가능, `Alt+F8`(Evaluate Expression)로 즉석 코드 실행도 가능
 
 ## Java 프로젝트 실행 준비 (LogViewer)
 
