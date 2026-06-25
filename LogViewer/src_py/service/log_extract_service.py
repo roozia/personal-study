@@ -151,7 +151,7 @@ class LogExtractService:
 
         keywords = params.get('keywords', ' ').strip()
         if keywords:
-           config.keywords = config._parse_keywords(keywords)
+           config.keywords = self._parse_keywords(keywords)
 
 
     # =========================================================================

@@ -3,7 +3,7 @@ LogViewer Python 버전 - Flask 웹 애플리케이션 진입점
 
 Java 대응 관계:
     web.xml                  →  Flask 앱 생성 + Blueprint 등록
-    dispatcher-servlet.xml   →  Blueprint URL 매핑
+    dispatcher-servlet.xml   →  Blueprint URL 매핑n
     Tomcat 서버              →  Flask 내장 개발 서버 (app.run)
 
 실행 방법:
@@ -16,7 +16,7 @@ from controller.log_download_controller import log_download_bp
 
 # ─────────────────────────────────────────────────────────
 # Java 대응: ApplicationContext / DispatcherServlet 초기화
-# ─────────────────────────────────────────────────────────
+# ────────────────────────────────────────────ccccc─────────────
 app = Flask(__name__)
 
 # ─────────────────────────────────────────────────────────
