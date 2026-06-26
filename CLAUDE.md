@@ -7,7 +7,7 @@
 - Java로 만든 프로그램을 Python으로 변환하는 방식으로 Python 문법 학습 중
 - 현재 대상 프로젝트: `LogViewer` (Java → Python 변환)
 
-## 현재 작업 파일 및 구현 상태 (2026.06.25 기준 — Python 버전 전체 완료, 실제 다운로드 테스트까지 성공)
+## 현재 작업 파일 및 구현 상태 (2026.06.26 기준 — Python 버전 전체 완료, 실제 다운로드 테스트까지 성공)
 
 전체 흐름: `app.py` → `controller/log_download_controller.py` → `service/log_extract_service.py` → `model/*`
 
@@ -45,11 +45,65 @@
 ### logviewer.properties
 - `logviewer.file.path=../logs/sample.log` 로 상대경로 변경됨 (LogViewer 루트 기준 `log/` 디렉토리 활용 추정)
 
-## Python 버전 완료 현황 (2026.06.25)
+## Python 버전 완료 현황 (2026.06.26)
 - `python app.py` 실행 → 브라우저(`http://localhost:8080/logDownloadPy.html`)에서 실제 파일 다운로드까지 정상 동작 **확인 완료**
 - 중간에 겪은 환경 이슈: IntelliJ Python SDK를 3.14 → 3.12로 교체하면서 Flask가 새 인터프리터 환경에 없어 `ModuleNotFoundError` 발생 → `Settings → Project: LogViewer → Python Interpreter`에서 flask 재설치로 해결
 - `_apply_request_params`의 `None.strip()` 리스크는 실제 테스트에서 문제 없이 지나감 (폼이 4개 필드를 항상 포함해서 보냄) — 더 손볼 필요 없음
 - `extract_block.py`의 죽은 코드 `pass` 한 줄만 정리 대상으로 남아있음 (선택사항)
+
+## Flask 앱 전체 구조와 흐름 (2026.06.26 정리)
+
+요청이 들어와서 응답이 나가기까지 전체 흐름:
+
+```
+브라우저
+  │
+  │ ① GET /logDownloadPy.html
+  ▼
+app.py (index 함수)                  ← HTML 폼 화면만 보여줌
+  │
+  │ ② 사용자가 폼 작성 후 제출 → POST /logDownloadPy.do
+  ▼
+controller/log_download_controller.py (download 함수)
+  │
+  │ ③ params 딕셔너리로 정리해서 넘김
+  ▼
+service/log_extract_service.py (execute 메서드)
+  │
+  │ ④ config 로딩 → 검증 → Pass1 매칭 → 블록 생성/병합 → Pass2 출력
+  ▼
+model/*.py (LogViewerConfig, MatchResult, ExtractBlock)
+  │
+  │ ⑤ (content, filename) 튜플로 결과 반환
+  ▼
+controller가 Response 객체로 포장 → 브라우저 파일 다운로드
+```
+
+### 각 레이어 역할 요약
+
+| 레이어 | Java 대응 | 역할 |
+|---|---|---|
+| `app.py` | `DispatcherServlet` + `web.xml` + Tomcat 시작 | 서버 켜기, Blueprint 등록, HTML 서빙 |
+| `controller/` | `@Controller` | 요청 받기 → service 위임 → Response 포장 (얇은 레이어, 비즈니스 로직 없음) |
+| `service/` | `@Service` | 실제 발췌 로직 전체 담당 |
+| `model/` | Inner class / DTO | 데이터 컨테이너 (LogViewerConfig: 설정, MatchResult: 매칭 1건, ExtractBlock: 범위 블록) |
+
+### service 내부 실행 순서
+
+```
+execute()
+  ├─ _load_config()              → logviewer.properties 읽기
+  ├─ _apply_request_params()     → 사용자 입력으로 설정 덮어쓰기
+  ├─ _build_filename()           → 다운로드 파일명 생성
+  └─ _extract()
+       ├─ _validate_path / _validate_condition   → 입력값 검증
+       ├─ _find_matches()        → Pass 1: 파일 전체 읽으며 조건 맞는 줄 탐색
+       ├─ _build_blocks()        → 매칭 줄 주변에 컨텍스트(앞뒤 줄) 붙이기
+       ├─ _merge_blocks()        → 겹치거나 인접한 블록 합치기
+       └─ _write_extract()       → Pass 2: 블록 범위에 해당하는 줄만 출력
+```
+
+파일을 2번 읽는 이유: Pass1에서 어떤 줄이 조건에 맞는지 먼저 파악하고, 블록 범위 확정 후 Pass2에서 그 범위만 출력. 파일 전체를 메모리에 올리지 않고 대용량 로그 처리 가능.
 
 ## 다음 단계 — Java 원본 실행 준비로 전환
 Python 변환/실행이 끝났으니, 다음은 `## Java 프로젝트 실행 준비 (LogViewer)` 섹션(Tomcat 배치, Spring JAR 8개 준비)으로 넘어갈 차례.
@@ -132,6 +186,20 @@ Python 변환/실행이 끝났으니, 다음은 `## Java 프로젝트 실행 준
 - 터미널에 `python app.py`를 직접 입력해서 실행하면, IntelliJ가 그 프로세스를 디버그 모드로 인식하지 못해 거터의 빨간 점 breakpoint가 무시됨
 - `app.py` 우클릭 → "Debug 'app'" (또는 벌레 아이콘)으로 실행해야 거터 breakpoint가 정상 작동
 - 멈춘 후 값 확인은 터미널 명령 없이 Debug 패널의 "Variables"에서 트리로 확인, 변수에 마우스 올리면 툴팁으로도 확인 가능, `Alt+F8`(Evaluate Expression)로 즉석 코드 실행도 가능
+
+### __pycache__ / .pyc 파일
+- Python 소스를 실행할 때 자동 생성되는 바이트코드 캐시 (Java의 `.class` 파일과 유사한 역할)
+- 실행 시 자동 재생성되므로 git으로 추적할 필요 없음 → `.gitignore`에 `__pycache__/`, `*.pyc` 추가
+- `.gitignore` 변경은 로컬에 즉시 반영되지만, 다른 PC에 전파하려면 commit + push 필요
+
+### .iml 파일 이식성
+- IntelliJ `.iml` 파일이 `$MODULE_DIR$` 상대경로를 사용하면 다른 PC에서도 그대로 동작
+- JDK/Python SDK 이름만 양쪽 IntelliJ에서 일치시키면 모듈 설정 그대로 공유 가능
+- `LogViewer.iml`, `misc.xml` → git으로 관리해서 PC 간 IntelliJ 설정 동기화 가능
+
+### HTML이 있는 Flask 앱도 터미널로 실행 가능
+- `python app.py` 실행 → 브라우저에서 `http://localhost:8080/logDownloadPy.html` 접속하면 HTML 폼도 정상 동작
+- Maven/Gradle은 Java 프로젝트 빌드 도구이므로 Python Flask 실행에는 전혀 불필요
 
 ## Java 프로젝트 실행 준비 (LogViewer)
 
