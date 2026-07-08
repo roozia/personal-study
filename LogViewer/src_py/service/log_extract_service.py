@@ -329,7 +329,7 @@ class LogExtractService:
 
         if has_key_words:
             for kwd in config.keywords:
-                if kwd in line and date_time_ok:
+                if kwd.upper() in line.upper() and date_time_ok:
                     return kwd
             return None
 
@@ -481,7 +481,11 @@ class LogExtractService:
 
            current_line = 0
 
+           total_cnt = len(blocks) # Block 전체 Size
+           cnt = 0 # Block 단위 Count
+
            for block in blocks:
+               cnt += 1
 
                # 블록 시작 전 까지 건너뛰기
                while current_line < block.start_row - 1:
@@ -490,11 +494,12 @@ class LogExtractService:
                        return '\n'.join(output).encode('utf-8') # 각각의 list 요소를 줄바꿈(\n) 문자로 연결 + utf-8로 Encoding
                    current_line += 1
 
-               output.append(self._build_header(block))
+
+               output.append(self._build_header(block, total_cnt, cnt))
 
                # 블록 범위 행 출력
                while current_line < block.end_row:
-                   line = next(f, None)
+                   line = str(current_line+1)+ " : " + next(f, None)
                    if not line:
                        break
                    current_line += 1
@@ -509,7 +514,7 @@ class LogExtractService:
     # 유틸
     # =========================================================================
 
-    def _build_header(self, block: ExtractBlock) -> str:
+    def _build_header(self, block: ExtractBlock, total_cnt:int, cnt:int) -> str:
         """
         Java 대응: private String buildHeader(ExtractBlock)
 
@@ -541,6 +546,7 @@ class LogExtractService:
                 sb += ", "
             sb += '"' + block.matched_keywords[i] + '"'
 
+        sb += " - ( Current:" + str(cnt) + " / Total:" + str(total_cnt) + ") "  # Block 갯수 표시 추가
         sb += "] =========="
         return str(sb)
 
@@ -586,6 +592,7 @@ class LogExtractService:
             return result
 
         return [kw.strip() for kw in raw.split(',') if kw.strip()]
+        # (list에 넣을) 결과값 > for 조건 > for 조건문 안에서의 조건문 순서로 이해할 것
 
 
     @staticmethod
