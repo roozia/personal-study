@@ -6,6 +6,46 @@
 ## 학습 목표
 - Java로 만든 프로그램을 Python으로 변환하는 방식으로 Python 문법 학습 중
 - 현재 대상 프로젝트: `LogViewer` (Java → Python 변환)
+- **(2026.07.14~) 신규 학습 방향 전환**: Python 프로젝트를 백지 상태에서 직접 Setup 해보는 연습 (회사에선 항상 세팅된 환경만 써서 초기 세팅 경험이 없음). pytest 테스트 코드 작성도 목표.
+
+## Python Setup 연습 프로젝트 (2026.07.14 시작)
+
+### 목적 / 배경
+- 회사에선 항상 세팅 완료된 환경에서만 작업 → venv, pyproject.toml, pytest 등을 **처음부터 손으로** 세팅하는 연습
+- 기존 `LogViewer/src_py`에 붙이지 않고 **새 프로젝트**로 백지 시작 (기존은 이미 완성 구조라 "Setup부터" 목적에 안 맞고, sys.path 의존 방식이라 표준 pyproject 구조와 충돌)
+- 세팅에 익숙해지면 나중에 LogViewer 로직을 이 구조로 옮겨올 예정
+
+### 프로젝트 위치 / 이름
+- `C:\selfStudy\py_setup_logviewer\` (git 루트 `C:\selfStudy`는 유지, 그 하위에 새 폴더)
+- 이름은 스네이크 케이스 — Python 패키지/모듈명 표준(PEP 8). 하이픈은 패키지명에 못 씀(`import` 문법 오류)
+
+### 도구 스택 (계획) — Java 대응
+| 역할 | Python 도구 | Java 대응 |
+|---|---|---|
+| 가상환경(격리) | `venv` | Maven local repo(.m2) 개념 |
+| 의존성 관리 | `pyproject.toml` | `pom.xml` |
+| 테스트 | `pytest` | JUnit |
+| 커버리지 | `pytest-cov` | JaCoCo |
+| 린터+포맷터 | `ruff` | Checkstyle+SpotBugs |
+| 타입 체크(선택) | `mypy` | 컴파일러 타입 검사 |
+
+### 실습 단계 (계획)
+1. ✅ 폴더 + venv 생성 + 활성화
+2. ⬜ 프로젝트 뼈대(src layout) + `pyproject.toml` 작성
+3. ⬜ 간단한 함수 1개 + pytest 테스트 1개
+4. ⬜ `pytest` 실행 → 초록불 확인
+5. ⬜ ruff, pytest-cov 붙이기
+
+### 진행 현황 (2026.07.14 퇴근 시점 — 1단계 완료)
+- `py_setup_logviewer` 폴더 생성 완료
+- **venv 버전 이슈**: 처음 `python -m venv .venv` 실행 시 PATH 때문에 3.14로 생성됨(지난번 불안정해서 피했던 버전). `pyvenv.cfg`로 발견 → `Remove-Item -Recurse -Force .venv` 후 `py -3.12 -m venv .venv`로 재생성 → 3.12.10으로 확정
+- 활성화 성공: `.\.venv\Scripts\Activate.ps1` → 프롬프트에 `(.venv)` 표시됨
+  - PowerShell 실행 정책 보안 오류는 `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned`로 해결(사용자 스코프만)
+- 격리 검증 완료: `Get-Command python` → `.venv\Scripts\python.exe` 가리킴, `pip list` → pip만 있는 빈 창고 확인
+
+### 다음 재개 지점 (집에서 이어가기)
+- 집 PC에서 먼저: `py -3.12 -m venv .venv` → `.\.venv\Scripts\Activate.ps1` (venv는 git 미추적이라 PC마다 재생성)
+- 그 다음 **2단계**부터: src layout 폴더 구조 만들기 + `pyproject.toml` 작성
 
 ## 현재 작업 파일 및 구현 상태 (2026.06.26 기준 — Python 버전 전체 완료, 실제 다운로드 테스트까지 성공)
 
