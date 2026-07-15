@@ -31,21 +31,70 @@
 
 ### 실습 단계 (계획)
 1. ✅ 폴더 + venv 생성 + 활성화
-2. ⬜ 프로젝트 뼈대(src layout) + `pyproject.toml` 작성
-3. ⬜ 간단한 함수 1개 + pytest 테스트 1개
+2. ✅ 프로젝트 뼈대(src layout) + `pyproject.toml` 작성 + editable 설치
+3. 🔶 간단한 함수 1개 + pytest 테스트 1개 (파일 내용 확정, **아직 파일 생성 안 함**)
 4. ⬜ `pytest` 실행 → 초록불 확인
 5. ⬜ ruff, pytest-cov 붙이기
 
-### 진행 현황 (2026.07.14 퇴근 시점 — 1단계 완료)
+### 진행 현황 (2026.07.15 기준 — 2단계 완료, 3단계 진행 중)
+
+**1단계 (완료)**
 - `py_setup_logviewer` 폴더 생성 완료
 - **venv 버전 이슈**: 처음 `python -m venv .venv` 실행 시 PATH 때문에 3.14로 생성됨(지난번 불안정해서 피했던 버전). `pyvenv.cfg`로 발견 → `Remove-Item -Recurse -Force .venv` 후 `py -3.12 -m venv .venv`로 재생성 → 3.12.10으로 확정
 - 활성화 성공: `.\.venv\Scripts\Activate.ps1` → 프롬프트에 `(.venv)` 표시됨
   - PowerShell 실행 정책 보안 오류는 `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned`로 해결(사용자 스코프만)
 - 격리 검증 완료: `Get-Command python` → `.venv\Scripts\python.exe` 가리킴, `pip list` → pip만 있는 빈 창고 확인
 
-### 다음 재개 지점 (집에서 이어가기)
-- 집 PC에서 먼저: `py -3.12 -m venv .venv` → `.\.venv\Scripts\Activate.ps1` (venv는 git 미추적이라 PC마다 재생성)
-- 그 다음 **2단계**부터: src layout 폴더 구조 만들기 + `pyproject.toml` 작성
+**2단계 (완료)**
+- 폴더 구조 생성: `src/logviewer/__init__.py`(빈 파일), `tests/` (src layout)
+- `pyproject.toml` 작성 완료 — `[project]`(메타/의존성), `[project.optional-dependencies]`의 `dev=["pytest>=8.0"]`, `[build-system]`(setuptools), `[tool.setuptools.packages.find] where=["src"]`
+  - 작성 중 `[project.optional-dependencies]` 블록이 복붙으로 중복되어 TOML 파싱 에러 → 중복 2줄 삭제로 해결
+  - `python -c "import tomllib; ..."`로 파싱 검증 완료
+- **editable 설치**: `pip install -e ".[dev]"` 실행 → `Successfully built py_setup_logviewer`, pytest + 전이 의존성(pluggy/iniconfig/packaging/colorama/Pygments) 자동 설치됨
+  - `[dev]`를 따옴표로 감싼 이유: PowerShell이 `[ ]`를 특수문자로 해석하는 것 방지
+
+**3단계 (진행 중 — 파일 내용은 아래 확정, 파일 생성만 남음)**
+- 만들 파일 2개. 소재는 지난 LogViewer의 `_parse_keywords` 재활용(로직 이미 이해 → pytest 문법에만 집중)
+
+`src/logviewer/keyword_parser.py`:
+```python
+"""콤마로 구분된 키워드 문자열을 리스트로 변환하는 함수."""
+
+
+def parse_keywords(raw: str) -> list[str]:
+    if not raw.strip():
+        return []
+    return [kw.strip() for kw in raw.split(',') if kw.strip()]
+```
+
+`tests/test_keyword_parser.py`:
+```python
+"""parse_keywords 함수에 대한 pytest 테스트."""
+from logviewer.keyword_parser import parse_keywords
+
+
+def test_basic_split():
+    assert parse_keywords("ERROR, WARN, INFO") == ["ERROR", "WARN", "INFO"]
+
+
+def test_excludes_empty_items():
+    assert parse_keywords("ERROR, , INFO") == ["ERROR", "INFO"]
+
+
+def test_empty_string_returns_empty_list():
+    assert parse_keywords("") == []
+```
+
+### 다음 재개 지점 (이어가기)
+- 먼저 venv 활성화 확인: `.\.venv\Scripts\Activate.ps1` → `(.venv)` 표시 (다른 PC면 `py -3.12 -m venv .venv` 후 `pip install -e ".[dev]"` 재실행)
+- 위 두 파일 생성 → **4단계**: `pytest` 실행해서 초록불(3 passed) 확인
+- 그 다음 **5단계**: ruff, pytest-cov 붙이기
+
+### 이번에 익힌 개념 (Setup 연습)
+- **src layout**: `src/패키지/` 구조. 루트에서 패키지가 안 보여서 `pip install -e .` 설치를 강제 → 테스트가 "실제 설치된 패키지"를 import하게 됨(로컬 폴더 우연 import 함정 방지). 테스트에서 `from logviewer... ` (not `from src.logviewer...`)로 import되는 게 그 증거
+- **editable 설치(`-e`)**: 소스를 복사하지 않고 바로가기로 연결 → 소스 수정 시 재설치 없이 반영
+- **전이 의존성(transitive dependency)**: toml엔 `pytest`만 적었는데 pluggy/iniconfig 등이 자동 설치됨 = pytest가 의존하는 부품들을 pip이 자동으로 끌어옴 (Maven이 spring-webmvc 하나로 spring-core 등 딸려오는 것과 동일)
+- **pytest 문법 (JUnit 대응)**: 파일명 `test_*.py`/함수명 `test_*` = 자동 발견·실행(`@Test` 불필요), `assert a == b`(=`assertEquals`), 클래스 불필요
 
 ## 현재 작업 파일 및 구현 상태 (2026.06.26 기준 — Python 버전 전체 완료, 실제 다운로드 테스트까지 성공)
 
