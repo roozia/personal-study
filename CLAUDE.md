@@ -96,6 +96,15 @@ def test_empty_string_returns_empty_list():
 - **전이 의존성(transitive dependency)**: toml엔 `pytest`만 적었는데 pluggy/iniconfig 등이 자동 설치됨 = pytest가 의존하는 부품들을 pip이 자동으로 끌어옴 (Maven이 spring-webmvc 하나로 spring-core 등 딸려오는 것과 동일)
 - **pytest 문법 (JUnit 대응)**: 파일명 `test_*.py`/함수명 `test_*` = 자동 발견·실행(`@Test` 불필요), `assert a == b`(=`assertEquals`), 클래스 불필요
 
+### git 관리 — 무엇을 커밋해야 다른 PC에서 동일 재현되나 (2026.07.16)
+- **커밋 대상 (동일 재현의 원천)**:
+  - `py_setup_logviewer/pyproject.toml` — 가장 중요. 의존성+구조 정의의 단일 진실 원천(pom.xml 역할). 이거 하나로 환경 재구성됨
+  - `py_setup_logviewer/src/logviewer/__init__.py` — 패키지 표식
+  - `.gitignore`, `CLAUDE.md`
+- **커밋 제외 (PC마다 재생성)**: `.venv/`(절대경로 박혀 이식 불가), `src/*.egg-info/`(editable 설치 잔여물) → 둘 다 `.gitignore`에 등록함
+- **핵심 원리**: `pyproject.toml`이 single source of truth라 구조가 갈라질 일 없음. 다른 PC에선 손으로 구조 다시 잡는 게 아니라 git 정의대로 재조립: `git pull` → `py -3.12 -m venv .venv` → 활성화 → `pip install -e ".[dev]"`(pyproject 읽어 pytest까지 동일 복원)
+- **git은 빈 폴더를 추적 안 함**: 지금 `tests/`가 비어서 커밋해도 다른 PC엔 안 생김. 3단계에서 `tests/test_*.py` 넣으면 그때 자동 추적됨 (그전엔 `mkdir tests` 수동)
+
 ## 현재 작업 파일 및 구현 상태 (2026.06.26 기준 — Python 버전 전체 완료, 실제 다운로드 테스트까지 성공)
 
 전체 흐름: `app.py` → `controller/log_download_controller.py` → `service/log_extract_service.py` → `model/*`
