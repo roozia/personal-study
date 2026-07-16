@@ -1,0 +1,34 @@
+ # ============================================================
+ # pyproject.toml — 프로젝트 정의 + 의존성 + 도구 설정
+ # Java 대응: pom.xml
+ # ============================================================
+
+ # [project] : 프로젝트 자체의 메타정보 (pom.xml의 <groupId>/<artifactId>/<version> 묶음)
+ [project]
+ name = "py_setup_logviewer"
+ version = "0.1.0"
+ description = "Python 프로젝트 셋업 연습 (venv, pyproject, pytest)"
+ requires-python = ">=3.12"
+
+ # 런타임 의존성 — 이 프로그램이 "실행될 때" 필요한 라이브러리
+ # 지금은 아무것도 안 씀 → 빈 리스트
+ # (나중에 flask 등을 옮겨오면 여기에 추가)  Java: pom.xml <dependencies> compile scope
+ dependencies = []
+
+ # 개발용 의존성 — "테스트/개발할 때만" 필요, 배포엔 불필요
+ # Java: pom.xml <dependency> 의 test scope
+ [project.optional-dependencies]
+ dev = [
+     "pytest>=8.0",
+ ]
+ 
+ # [build-system] : 이 프로젝트를 어떻게 "빌드/설치"할지 지정
+ # Java의 Maven 자체(빌드 도구)에 해당. 거의 항상 이 형태 그대로 씀
+ [build-system]
+ requires = ["setuptools>=61.0"]
+ build-backend = "setuptools.build_meta"
+ 
+ # setuptools에게 "패키지는 src 폴더 아래에서 찾아라"라고 알려줌
+ # (src layout을 쓰기 때문에 필요한 설정)
+ [tool.setuptools.packages.find]
+ where = ["src"]
