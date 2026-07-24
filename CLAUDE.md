@@ -32,11 +32,46 @@
 ### 실습 단계 (계획)
 1. ✅ 폴더 + venv 생성 + 활성화
 2. ✅ 프로젝트 뼈대(src layout) + `pyproject.toml` 작성 + editable 설치
-3. 🔶 간단한 함수 1개 + pytest 테스트 1개 (파일 내용 확정, **아직 파일 생성 안 함**)
-4. ⬜ `pytest` 실행 → 초록불 확인
-5. ⬜ ruff, pytest-cov 붙이기
+3. ✅ 간단한 함수 1개 + pytest 테스트 1개
+4. ✅ `pytest` 실행 → 초록불(3 passed) 확인
+5. ✅ ruff, pytest-cov 붙이기 + pyproject에 옵션 박기
 
-### 진행 현황 (2026.07.15 기준 — 2단계 완료, 3단계 진행 중)
+## 🎉 5단계 전부 완료 (2026.07.22) — Setup 연습 완주
+
+- 3단계: `keyword_parser.py` + `test_keyword_parser.py` 생성 (아래 확정 내용대로)
+- 4단계: `pytest` → `3 passed` 확인
+- 5단계: pytest-cov(커버리지) + ruff(린트/포맷) 붙임
+  - **pytest-cov**: `pytest --cov=logviewer --cov-report=term-missing` → 100% 확인. 일부러 `raise` 분기 추가해 83%로 떨어뜨리며 `Missing` 컬럼(미실행 줄번호) 체감 → 원복
+  - **ruff**: `ruff check`(F401 미사용 import 잡음) + `--fix`(자동 삭제), `ruff format`(작은→큰따옴표 통일, docstring 뒤 빈줄) 체험. `--diff`로 적용 전 미리보기 가능
+  - **pyproject.toml에 옵션 박기**: `[tool.pytest.ini_options]`의 `addopts="--cov=logviewer --cov-report=term-missing"`, `testpaths=["tests"]` → 이제 `pytest`만 쳐도 커버리지 자동 출력
+- **커밋 완료**: `Python Setup 3~5단계...` (`.coverage`는 재생성물이라 `.gitignore`에 추가 후 제외)
+
+### 방향 확정 (2026.07.24) — 다음 작업은 여기서 시작
+- 장기 목표: **특정 현상의 문제점 정의 → MVP 개발** 경험 축적 (회사에선 세팅된 환경만 써서 초기 세팅·구현 전 과정 경험이 부족)
+- **결정**: 세팅 반복(후보 A/B) 대신 **작은 MVP 1개를 문제정의부터 끝까지**(후보 C). 세팅은 그 과정에서 "도구"로 소비. 첫 MVP 소재는 **LogViewer 발췌 로직 이식**(익숙한 도메인 → 머리를 "프로세스"에만 씀). 사용자 의사: "1번(LogViewer 이식) 먼저, 그 다음 2번(내가 겪는 실제 불편 자동화)"
+
+### 첫 MVP: LogViewer 로직 → CLI 도구 (2026.07.24 설계 합의)
+- **왜 CLI인가 (연습용 아님, 실무 표준)**: 로그 발췌는 전형적 CLI 영역(grep/ripgrep/awk/jq/journalctl/git log). 사내 개발 도구 다수가 CLI. 웹보다 이 도메인에 자연스럽고 새 기술(argparse, `[project.scripts]`)도 붙음
+- **진짜 목표 = core 분리**: 순수 로직 core(파일/네트워크 모르는 매칭/블록/병합 함수) ↔ 얇은 껍데기(CLI/Web/라이브러리) 분리. 현재 `LogViewer/src_py`는 로직+파일I/O가 엉겨 테스트 불가 → 이 분리가 MVP 설계 핵심. CLI는 그 분리를 강제하는 좋은 핑계 (나중에 웹 다시 얹고 싶으면 core 위 껍데기만 교체)
+- **"이식 = 복붙" 아님**: 복붙은 재료. 연습 본질은 문제정의→설계→구현→테스트 한 바퀴. LogViewer는 도메인 부담 0으로 만드는 재료일 뿐
+- **로드맵**: ① 문제 정의 1장 → ② core 분리 설계(순수함수 ↔ I/O) → ③ `src_py` service 로직을 순수함수로 뜯어 `src/logviewer/`로 이식 → ④ 조각마다 pytest(TDD) → ⑤ 3개 기능 test-first로 → ⑥ argparse + `[project.scripts]`로 `logviewer` 명령 등록(**새 세팅 기술: console_scripts 엔트리포인트**)
+- **백로그 = 사용자가 직접 추가했던 3개 기능** (`LogViewer/src_py/service/log_extract_service.py` 기준):
+  - Story A(대소문자 무시 검색): 332행 `kwd.upper() in line.upper()` → `_match_line`. 순수 판정 → TDD 최적
+  - Story B(줄번호 같이 출력): 502행 `str(current_line+1)+" : "+...` → `_write_extract` 출력 포맷
+  - Story C(블록 Current/Total 표시): 549행 `Current:.../Total:...` → `_build_header`. 인자→문자열 순수함수, 가장 쉬운 테스트
+- **⚠️ Story B 502행에 숨은 버그 (이번 연습 하이라이트)**: `line = str(current_line+1)+" : "+next(f, None)` — 블록 `end_row`가 파일 끝 초과 시 `next`가 `None` 반환 → `str + None`에서 `TypeError`. 아래 `if not line: break` 방어는 연결(+)이 먼저 터져 무력화됨. **지금 손으로 고치지 말 것** → 이식+TDD 단계에서 "이 상황 재현 테스트 먼저(빨간불) → 고쳐서 초록불"로 잡기 = pytest 배우는 이유 그 자체
+- **다음 실제 액션**: **사용자가 문제 정의 초안을 직접 작성**(처음이라 손으로 해보고 싶어 함) → 내가 다듬기. 템플릿: 현상 / 불편 / 원하는 것 / MVP 범위·비범위 / 완료 기준. (시간상 다음 세션에 시작 예정)
+
+### 대화 복구 & PC 이관 방법 (2026.07.24 정리)
+- **터미널에서 대화가 휘발돼도 원문은 디스크에 있음**: `C:\Users\user\.claude\projects\C--selfStudy\*.jsonl` (세션 1개=파일 1개, 한 줄=메시지 1개, UTF-8). 화면 표시만 사라진 것. python 덤프 시 한글 깨짐은 터미널 코드페이지 문제지 파일은 멀쩡
+  - 이어가기 정공법: `claude --continue`(최근 세션) / `claude --resume`(목록에서 선택)
+- **핵심: 대화기록·memory는 git repo 밖(`C:\Users\user\.claude\`)이라 `git push`로 안 딸려감**. 이관 채널 2원화:
+  - ① 맥락 → **CLAUDE.md (repo 안, git이 자동 이송)**. 원칙: 중요한 건 반드시 CLAUDE.md에 남긴다. .jsonl은 "혹시 몰라 보관하는 원본"일 뿐 주 채널 아님
+  - ② git 밖 자산(memory `MEMORY.md`/`feedback_*.md`, 대화원문 .jsonl)은 **`C:\Users\user\.claude\projects\C--selfStudy\` 폴더를 새 PC로 수동 복사**해야 보존됨. 안 하면 새 PC에서 백지
+- **새 메인 PC 세팅 순서(이 PC 포맷 전 1회)**: `git clone <원격>` → `cd py_setup_logviewer` → `py -3.12 -m venv .venv` → `Activate.ps1` → `pip install -e ".[dev]"` → `pytest`(초록불로 이관 검증)
+- **⚠️ 선결 확인 필요**: 원격저장소(GitHub 등)에 push 중인지. 로컬 commit만 하고 push 안 했으면 새 PC에서 clone할 원본이 없음 → 다음 세션 시작 시 원격 연결 상태부터 확인할 것
+
+### 초기 진행 기록 (2026.07.14~16)
 
 **1단계 (완료)**
 - `py_setup_logviewer` 폴더 생성 완료
