@@ -61,6 +61,7 @@
   - Story C(블록 Current/Total 표시): 549행 `Current:.../Total:...` → `_build_header`. 인자→문자열 순수함수, 가장 쉬운 테스트
 - **⚠️ Story B 502행에 숨은 버그 (이번 연습 하이라이트)**: `line = str(current_line+1)+" : "+next(f, None)` — 블록 `end_row`가 파일 끝 초과 시 `next`가 `None` 반환 → `str + None`에서 `TypeError`. 아래 `if not line: break` 방어는 연결(+)이 먼저 터져 무력화됨. **지금 손으로 고치지 말 것** → 이식+TDD 단계에서 "이 상황 재현 테스트 먼저(빨간불) → 고쳐서 초록불"로 잡기 = pytest 배우는 이유 그 자체
 - **다음 실제 액션**: **사용자가 문제 정의 초안을 직접 작성**(처음이라 손으로 해보고 싶어 함) → 내가 다듬기. 템플릿: 현상 / 불편 / 원하는 것 / MVP 범위·비범위 / 완료 기준. (시간상 다음 세션에 시작 예정)
+- **ToDo(나중)**: git CLI로 브랜치 만들기 + PR 날리기 연습. 사용자는 지금껏 Eclipse 등 GUI만 쓰다 최근에야 git 명령줄 사용. 이 MVP를 `git checkout -b feature/...`로 브랜치 따서 작업하고 `gh pr create`로 PR 내면 연습 소재가 됨 → GUI 흐름(브랜치→커밋→PR→머지)의 CLI 1:1 대응을 그때 같이 짚기
 
 ### 대화 복구 & PC 이관 방법 (2026.07.24 정리)
 - **터미널에서 대화가 휘발돼도 원문은 디스크에 있음**: `C:\Users\user\.claude\projects\C--selfStudy\*.jsonl` (세션 1개=파일 1개, 한 줄=메시지 1개, UTF-8). 화면 표시만 사라진 것. python 덤프 시 한글 깨짐은 터미널 코드페이지 문제지 파일은 멀쩡
