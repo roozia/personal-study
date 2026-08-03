@@ -202,8 +202,9 @@ public class LogExtractService {
 
         try (BufferedReader reader = new BufferedReader(
                 new InputStreamReader(new FileInputStream(filePath), inputCharset));
+
              PrintWriter writer = new PrintWriter(
-                new OutputStreamWriter(out, "UTF-8"), false)) {
+                new OutputStreamWriter(out, "UTF-8"), false)) { // try 구문
 
             int currentLine = 0;
 

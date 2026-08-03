@@ -70,7 +70,10 @@
   - ① 맥락 → **CLAUDE.md (repo 안, git이 자동 이송)**. 원칙: 중요한 건 반드시 CLAUDE.md에 남긴다. .jsonl은 "혹시 몰라 보관하는 원본"일 뿐 주 채널 아님
   - ② git 밖 자산(memory `MEMORY.md`/`feedback_*.md`, 대화원문 .jsonl)은 **`C:\Users\user\.claude\projects\C--selfStudy\` 폴더를 새 PC로 수동 복사**해야 보존됨. 안 하면 새 PC에서 백지
 - **새 메인 PC 세팅 순서(이 PC 포맷 전 1회)**: `git clone <원격>` → `cd py_setup_logviewer` → `py -3.12 -m venv .venv` → `Activate.ps1` → `pip install -e ".[dev]"` → `pytest`(초록불로 이관 검증)
-- **⚠️ 선결 확인 필요**: 원격저장소(GitHub 등)에 push 중인지. 로컬 commit만 하고 push 안 했으면 새 PC에서 clone할 원본이 없음 → 다음 세션 시작 시 원격 연결 상태부터 확인할 것
+- **✅ 원격 확인 완료 (2026.08.03)**: `origin` = `https://github.com/roozia/personal-study.git`, `main` → `origin/main` 추적 중, unpushed 커밋 없음
+  - **서브모듈 있음**: `personal-study01` (`https://github.com/roozia/personal-study01.git`, detached HEAD `b2d9f6f`) → 새 PC에서 clone할 땐 반드시 `git clone --recurse-submodules`. 안 그러면 빈 폴더로 옴
+  - 새 PC 복구: `git clone --recurse-submodules <원격> selfStudy` → `cd py_setup_logviewer` → `py -3.12 -m venv .venv` → `Activate.ps1` → `pip install -e ".[dev]"` → `pytest`(3 passed면 이관 성공)
+  - `~/.claude/` 수동 백업 시 **`.credentials.json`은 제외** (인증 토큰. 새 PC에서 재로그인하면 재생성됨)
 
 ### 초기 진행 기록 (2026.07.14~16)
 
@@ -239,8 +242,8 @@ execute()
 
 파일을 2번 읽는 이유: Pass1에서 어떤 줄이 조건에 맞는지 먼저 파악하고, 블록 범위 확정 후 Pass2에서 그 범위만 출력. 파일 전체를 메모리에 올리지 않고 대용량 로그 처리 가능.
 
-## 다음 단계 — Java 원본 실행 준비로 전환
-Python 변환/실행이 끝났으니, 다음은 `## Java 프로젝트 실행 준비 (LogViewer)` 섹션(Tomcat 배치, Spring JAR 8개 준비)으로 넘어갈 차례.
+## (구) 다음 단계 — Java 원본 실행 준비 → **폐기됨**
+Java 실행은 다른 PC에서 이미 했던 작업이라 이 PC에서 반복할 이유가 없음. 실제 다음 단계는 위쪽 `### 첫 MVP: LogViewer 로직 → CLI 도구` 참고.
 
 ## Java → Python 주요 변환 포인트
 | Java | Python (Flask) |
@@ -335,35 +338,8 @@ Python 변환/실행이 끝났으니, 다음은 `## Java 프로젝트 실행 준
 - `python app.py` 실행 → 브라우저에서 `http://localhost:8080/logDownloadPy.html` 접속하면 HTML 폼도 정상 동작
 - Maven/Gradle은 Java 프로젝트 빌드 도구이므로 Python Flask 실행에는 전혀 불필요
 
-## Java 프로젝트 실행 준비 (LogViewer)
-
-### 프로젝트 구조
-- IntelliJ 모듈 타입: `JAVA_EE_MODULE` (Dynamic Web Project 설정 이미 되어있음)
-- JDK 11, Spring MVC 5.3.39, Tomcat 9 기반
-- `web/WEB-INF/dispatcher-servlet.xml`, `web/WEB-INF/web.xml` 존재
-
-### 현재 상태
-| 항목 | 상태 |
-|---|---|
-| JDK 11 | 설치됨 |
-| Tomcat 9.0.117 | 다운로드 완료, `C:\selfStudy\server\apache-tomcat-9.0.117\` 에 배치 필요 |
-| Spring 5.3.39 JAR 8개 | 미준비 (내일 진행 예정) |
-
-### 필요한 Spring JAR 목록 (web/WEB-INF/lib/ 에 배치)
-- spring-webmvc-5.3.39.jar
-- spring-context-5.3.39.jar
-- spring-core-5.3.39.jar
-- spring-beans-5.3.39.jar
-- spring-web-5.3.39.jar
-- spring-aop-5.3.39.jar
-- spring-expression-5.3.39.jar
-- spring-jcl-5.3.39.jar
-
-### JAR 다운로드 방법
-- mvnrepository.com 에서 직접 검색하여 다운로드
-- 또는 Maven CLI: `mvn dependency:get -Dartifact=org.springframework:spring-webmvc:5.3.39`
-
-### Spring JAR 준비 후 IntelliJ Run 설정 순서
-1. `Run → Edit Configurations → + → Tomcat Server → Local`
-2. `Configure...` 에서 Tomcat 설치 경로 지정
-3. `Deployment` 탭 → `+` → `Artifact` → `LogViewer:war exploded` 선택
+## Java 원본(LogViewer) 위치 — 이 PC에서는 실행 대상 아님 (2026.08.03 정리)
+- `LogViewer/src`의 Java 코드는 **다른 PC에서 작성/실행**했던 것. 이 PC에서는 그 소스를 **Python으로 변환하는 재료**로만 썼음
+- 따라서 Tomcat 배치 / Spring JAR 8개 준비 / IntelliJ Tomcat Run 설정 절차는 여기서 불필요 → 관련 계획 섹션 삭제함
+- `server/apache-tomcat-*`, `web/WEB-INF/lib/`(현재 비어 있음)는 gitignore 대상이라 포맷과 함께 사라져도 무방. 나중에 Java를 다시 돌릴 일이 생기면 그때 새로 받으면 됨
+- 정리 내역: 알맹이 없는 `web/web/WEB-INF/web.xml`(304B 껍데기) 삭제 + `LogViewer.iml`에 중복 등록돼 있던 해당 deploymentDescriptor 줄 제거 (진짜 설정은 `web/WEB-INF/web.xml`)

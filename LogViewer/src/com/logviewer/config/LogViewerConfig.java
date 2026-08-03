@@ -62,6 +62,7 @@ public class LogViewerConfig {
                 props.load(in);
             }
         } else {
+            // getResourceAsStream :  Class Path나 패키지 경로에 있는 리소스 파일을 읽어 InputStream으로 변환
             try (InputStream in = LogViewerConfig.class.getResourceAsStream(CLASSPATH_DEFAULT)) {
                 if (in == null) {
                     throw new IOException("설정 파일을 찾을 수 없습니다. 클래스패스: " + CLASSPATH_DEFAULT
