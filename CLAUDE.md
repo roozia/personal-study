@@ -74,6 +74,21 @@
   - **서브모듈 있음**: `personal-study01` (`https://github.com/roozia/personal-study01.git`, detached HEAD `b2d9f6f`) → 새 PC에서 clone할 땐 반드시 `git clone --recurse-submodules`. 안 그러면 빈 폴더로 옴
   - 새 PC 복구: `git clone --recurse-submodules <원격> selfStudy` → `cd py_setup_logviewer` → `py -3.12 -m venv .venv` → `Activate.ps1` → `pip install -e ".[dev]"` → `pytest`(3 passed면 이관 성공)
   - `~/.claude/` 수동 백업 시 **`.credentials.json`은 제외** (인증 토큰. 새 PC에서 재로그인하면 재생성됨)
+  - **⚠️ `~/.claude.json`은 `.claude/` 폴더 밖에 따로 있음** — 폴더만 복사하면 누락됨. Claude Code 본체 설정(등록 프로젝트 목록, MCP 서버)이라 같이 챙길 것
+  - 다른 저장소 `C:\claudeSource` → `https://github.com/roozia/claude-code.git` (push 완료, 재clone으로 복원)
+
+#### 새 PC에서 "파일 복사로는 복원 안 되는" 것 5가지 (2026.08.03)
+백업 zip에 못 담기는 항목들. 새 PC 세팅 시 순서대로 처리할 것:
+1. **GitHub PAT** — Windows 자격 증명 관리자에 저장돼 있어 포맷과 함께 소멸. 첫 push 때 비밀번호가 아니라 PAT 입력 (분실 시 GitHub → Settings → Developer settings에서 재발급)
+2. **PowerShell 실행 정책** — `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned`. 안 하면 `Activate.ps1`이 보안 오류로 막힘
+3. **Python 3.12 설치** — 3.14 아님 (3.14는 지난번 불안정 이슈로 회피하기로 한 버전). venv 생성은 `py -3.12 -m venv .venv`
+4. **IntelliJ Python SDK 이름** — `LogViewer.iml`이 SDK를 `"Python 3.12 (Python312)"`라는 **이름 문자열**로 참조. 새 PC에서 SDK 이름이 다르면 모듈 설정이 깨져 보이므로 이름을 맞추거나 IDE에서 재지정
+5. **Claude Code 재설치 + 로그인** → `.credentials.json` 재생성
+
+#### git 이메일 오타 이력 (2026.08.03 수정)
+- 이 PC의 `user.email`이 `noonsollin@gmial.com`(gmail 오타)이었음 → 전체 33개 커밋 중 21개가 오타 주소로 기록됨
+- **커밋/clone/push 동작엔 전혀 영향 없었음**. 이메일은 커밋의 저자 표시 문자열일 뿐이고, 인증은 별도(PAT)이기 때문. 유일한 손해는 GitHub에서 해당 커밋이 계정에 연결되지 않는 것(아바타·잔디 누락)
+- `git config --global user.email noonsollin@gmail.com`으로 수정 완료. 과거 21개는 히스토리 재작성(force push) 필요해서 그냥 두기로 함
 
 ### 초기 진행 기록 (2026.07.14~16)
 
